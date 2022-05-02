@@ -1,19 +1,19 @@
 <script type="text/javascript">
-	RED.nodes.registerType('k neighbors classifier',{
-		category: 'machine learning',
+	RED.nodes.registerType('k neighbors classifier', {
+		category: 'classifier',
 		color: '#DAC4B4',
 		defaults: {
-			name: {value:""},
-			savePath: {value:""},
-			saveName: {value:""},
-			neighbors: {value:"", type:"int"},
-			weights: {value:"uniform"}
+			name: { value: "" },
+			savePath: { value: "" },
+			saveName: { value: "" },
+			neighbors: { value: "", type: "int" },
+			weights: { value: "uniform" }
 		},
-		inputs:1,
-		outputs:2,
+		inputs: 1,
+		outputs: 2,
 		icon: "file.png",
-		label: function() {
-			return this.name||"k neighbors classifier";
+		label: function () {
+			return this.name || "k neighbors classifier";
 		}
 	});
 </script>

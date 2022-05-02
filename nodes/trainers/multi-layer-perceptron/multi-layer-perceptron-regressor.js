@@ -9,7 +9,7 @@ module.exports = function (RED) {
 		node.file = __dirname + '/../trainer.py'
 
 		node.config = {
-			algorithm: 'multi-layer-perceptron-classifier',
+			algorithm: 'multi-layer-perceptron-regressor',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
 				hidden_layer_sizes: utils.listOfInt(config.layers) || [10, 10, 10],
@@ -23,5 +23,5 @@ module.exports = function (RED) {
 
 		utils.run(RED, node, config)
 	}
-	RED.nodes.registerType("multi layer perceptron classifier", mLPCNode);
+	RED.nodes.registerType("multi layer perceptron regressor", mLPCNode);
 }

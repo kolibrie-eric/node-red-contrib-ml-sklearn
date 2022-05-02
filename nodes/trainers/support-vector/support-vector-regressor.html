@@ -1,25 +1,24 @@
 <script type="text/javascript">
-	RED.nodes.registerType('decision tree classifier', {
-		category: 'classifier',
+	RED.nodes.registerType('support vector regressor', {
+		category: 'regressor',
 		color: '#DAC4B4',
 		defaults: {
 			name: { value: "" },
 			savePath: { value: "" },
 			saveName: { value: "" },
-			maxDepth: { value: "" },
-			criterion: { value: "gini" },
-			splitter: { value: "best" }
+			c: { value: "" },
+			kernel: { value: "rbf" }
 		},
 		inputs: 1,
 		outputs: 2,
 		icon: "file.png",
 		label: function () {
-			return this.name || "decision tree classifier";
+			return this.name || "support vector regressor";
 		}
 	});
 </script>
 
-<script type="text/x-red" data-template-name="decision tree classifier">
+<script type="text/x-red" data-template-name="support vector regressor">
 	<div class="form-row">
 		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
@@ -33,27 +32,23 @@
 		<input type="text" id="node-input-saveName" placeholder="Save name">
 	</div>
 	<div class="form-row">
-		<label for="node-input-maxDepth"><i class="icon-tag"></i>Max depth</label>
-		<input type="number" id="node-input-maxDepth" placeholder="Max depth of the tree.">
+		<label for="node-input-c"><i class="icon-tag"></i>C penalty</label>
+		<input type="text" id="node-input-c" placeholder="1">
 	</div>
 	<div class="form-row">
-		<label for="node-input-criterion"><i class="icon-tag"></i>Criterion</label>
-		<select id="node-input-criterion">
-			<option value="gini" selected>gini</option>
-			<option value="entropy">entropy</option>
-		</select>
-	</div>
-	<div class="form-row">
-		<label for="node-input-splitter"><i class="icon-tag"></i>Splitter</label>
-		<select id="node-input-splitter">
-			<option value="best" selected>best</option>
-			<option value="random">random</option>
+		<label for="node-input-kernel"><i class="icon-tag"></i>Kernel</label>
+		<select id="node-input-kernel">
+			<option value="linear">linear</option>
+			<option value="poly">poly</option>
+			<option value="rbf" selected>rbf</option>
+			<option value="sigmoid">sigmoid</option>
+			<option value="precomputed">precomputed</option>
 		</select>
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="decision tree classifier">
-	<p>A node that trains a Decision Tree Classifier model.</p>
+<script type="text/x-red" data-help-name="support vector regressor">
+	<p>A node that trains a Support Vector regressor model.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -84,7 +79,7 @@
 		<code>msg.payload</code> is an array containing training cases with labels.
 	</p>
 	<p>
-		This node fits a decision tree classifier to such array in order to match the labels.
+		This node fits a support vector regressor to such array in order to match the labels.
 	</p>
 
 	<h3>References</h3>

@@ -1,14 +1,14 @@
-module.exports = function(RED){
-	function dTCNode(config){
+module.exports = function (RED) {
+	function dTCNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
 		var node = this;
 
 		//set configurations
-		node.file = __dirname +  '/../trainer.py'
+		node.file = __dirname + '/../trainer.py'
 		node.config = {
-			classifier: 'decision-tree-classifier',
+			algorithm: 'decision-tree-classifier',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
 				max_depth: parseInt(config.depth) || undefined,

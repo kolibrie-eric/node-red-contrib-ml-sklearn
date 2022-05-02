@@ -1,14 +1,14 @@
-module.exports = function(RED){
-	function rFCNode(config){
+module.exports = function (RED) {
+	function rFCNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
 		var node = this;
 
 		//set configurations
-		node.file = __dirname +  '/../trainer.py'
+		node.file = __dirname + '/../trainer.py'
 		node.config = {
-			classifier: 'random-forest-classifier',
+			algorithm: 'random-forest-classifier',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
 				criterion: config.criterion,

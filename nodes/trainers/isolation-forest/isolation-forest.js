@@ -1,14 +1,14 @@
-module.exports = function(RED){
-	function iFCNode(config){
+module.exports = function (RED) {
+	function iFCNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
 		var node = this;
 
 		//set configurations
-		node.file = __dirname +  '/../trainer.py'
+		node.file = __dirname + '/../trainer.py'
 		node.config = {
-			classifier: 'isolation-forest-classifier',
+			algorithm: 'isolation-forest',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
 				n_estimators: parseInt(config.numTrees) || undefined,
@@ -19,5 +19,5 @@ module.exports = function(RED){
 
 		utils.run(RED, node, config)
 	}
-	RED.nodes.registerType("isolation forest classifier", iFCNode)
+	RED.nodes.registerType("isolation forest", iFCNode)
 }

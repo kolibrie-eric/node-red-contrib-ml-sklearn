@@ -1,19 +1,19 @@
 <script type="text/javascript">
-	RED.nodes.registerType('support vector classifier',{
-		category: 'machine learning',
+	RED.nodes.registerType('support vector classifier', {
+		category: 'classifier',
 		color: '#DAC4B4',
 		defaults: {
-			name: {value:""},
-			savePath: {value:""},
-			saveName: {value:""},
-			c: {value:""},
-			kernel: {value:"rbf"}
+			name: { value: "" },
+			savePath: { value: "" },
+			saveName: { value: "" },
+			c: { value: "" },
+			kernel: { value: "rbf" }
 		},
-		inputs:1,
-		outputs:2,
+		inputs: 1,
+		outputs: 2,
 		icon: "file.png",
-		label: function() {
-			return this.name||"support vector classifier";
+		label: function () {
+			return this.name || "support vector classifier";
 		}
 	});
 </script>

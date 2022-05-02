@@ -1,6 +1,6 @@
 <script type="text/javascript">
-	RED.nodes.registerType('multi layer perceptron classifier', {
-		category: 'classifier',
+	RED.nodes.registerType('multi layer perceptron regressor', {
+		category: 'regressor',
 		color: '#DAC4B4',
 		defaults: {
 			name: { value: "" },
@@ -17,12 +17,12 @@
 		outputs: 2,
 		icon: "file.png",
 		label: function () {
-			return this.name || "multi layer perceptron classifier";
+			return this.name || "multi layer perceptron regressor";
 		}
 	});
 </script>
 
-<script type="text/x-red" data-template-name="multi layer perceptron classifier">
+<script type="text/x-red" data-template-name="multi layer perceptron regressor">
 	<div class="form-row">
 		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
@@ -70,8 +70,8 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="multi layer perceptron classifier">
-	<p>A node that trains a Multi Layer Perceptron Classifier model.</p>
+<script type="text/x-red" data-help-name="multi layer perceptron regressor">
+	<p>A node that trains a Multi Layer Perceptron regressor model.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -102,7 +102,7 @@
 		<code>msg.payload</code> is an array containing training cases with labels.
 	</p>
 	<p>
-		This node fits a multi layer perceptron classifier to such array in order to match the labels.
+		This node fits a multi layer perceptron regressor to such array in order to match the labels.
 	</p>
 
 	<h3>References</h3>

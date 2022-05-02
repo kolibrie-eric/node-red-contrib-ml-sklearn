@@ -1,5 +1,5 @@
 module.exports = function (RED) {
-	function kNCNode(config) {
+	function sVCNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
@@ -8,15 +8,15 @@ module.exports = function (RED) {
 		//set configurations
 		node.file = __dirname + '/../trainer.py'
 		node.config = {
-			algorithm: 'k-neighbors-classifier',
+			algorithm: 'support-vector-regressor',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
-				n_neighbors: parseInt(config.neighbors) || undefined,
-				weights: config.weights || undefined
+				C: Number(config.c) || undefined,
+				kernel: config.kernel || undefined
 			}
 		}
 
 		utils.run(RED, node, config)
 	}
-	RED.nodes.registerType("k neighbors classifier", kNCNode);
+	RED.nodes.registerType("support vector regressor", sVCNode);
 }

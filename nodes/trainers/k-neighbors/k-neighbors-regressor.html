@@ -1,26 +1,24 @@
 <script type="text/javascript">
-	RED.nodes.registerType('elliptic envelope classifier',{
-		category: 'machine learning',
-		color: '#C0C0C0',
+	RED.nodes.registerType('k neighbors regressor', {
+		category: 'regressor',
+		color: '#DAC4B4',
 		defaults: {
-			name: {value:""},
-			savePath: {value:""},
-			saveName: {value:""},
-			contamination: {value:""},
-			centered: {value:""},
-			fraction: {value:""},
-			seed: {value:""}
+			name: { value: "" },
+			savePath: { value: "" },
+			saveName: { value: "" },
+			neighbors: { value: "", type: "int" },
+			weights: { value: "uniform" }
 		},
-		inputs:1,
-		outputs:2,
+		inputs: 1,
+		outputs: 2,
 		icon: "file.png",
-		label: function() {
-			return this.name||"elliptic envelope classifier";
+		label: function () {
+			return this.name || "k neighbors regressor";
 		}
 	});
 </script>
 
-<script type="text/x-red" data-template-name="elliptic envelope classifier">
+<script type="text/x-red" data-template-name="k neighbors regressor">
 	<div class="form-row">
 		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
@@ -34,25 +32,20 @@
 		<input type="text" id="node-input-saveName" placeholder="Save name">
 	</div>
 	<div class="form-row">
-		<label for="node-input-contamination"><i class="icon-tag"></i>Contamination</label>
-		<input type="text" id="node-input-contamination" placeholder="0.1">
+		<label for="node-input-neighbors"><i class="icon-tag"></i>Neighbors</label>
+		<input type="number" id="node-input-neighbors" placeholder="5">
 	</div>
 	<div class="form-row">
-        <label for="node-input-centered"><i class="icon-tag"></i>Assume centered</label>
-        <input type="checkbox" id="node-input-centered">
-    </div>
-	<div class="form-row">
-		<label for="node-input-fraction"><i class="icon-tag"></i>Support fraction</label>
-		<input type="text" id="node-input-fraction" placeholder="">
-	</div>
-	<div class="form-row">
-		<label for="node-input-seed"><i class="icon-tag"></i>Seed</label>
-		<input type="number" id="node-input-seed" placeholder="">
+		<label for="node-input-weights"><i class="icon-tag"></i>Weights</label>
+		<select id="node-input-weights">
+			<option value="uniform" selected>uniform</option>
+			<option value="distance">distance</option>
+		</select>
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="elliptic envelope classifier">
-	<p>A node that trains an Elliptic Envelope Classifier model for outlier detection.</p>
+<script type="text/x-red" data-help-name="k neighbors regressor">
+	<p>A node that trains a K Neighbors regressor model.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -80,10 +73,10 @@
 
 	<h3>Details</h3>
 	<p>
-		<code>msg.payload</code> is an array containing training cases.
+		<code>msg.payload</code> is an array containing training cases with labels.
 	</p>
 	<p>
-		This node fits a elliptic envelope classifier to such array in order to permorm outlier detection.
+		This node fits a k neighbors regressor to such array in order to match the labels.
 	</p>
 
 	<h3>References</h3>

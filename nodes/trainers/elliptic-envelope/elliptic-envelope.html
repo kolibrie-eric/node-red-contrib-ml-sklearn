@@ -1,25 +1,26 @@
 <script type="text/javascript">
-	RED.nodes.registerType('decision tree classifier', {
-		category: 'classifier',
-		color: '#DAC4B4',
+	RED.nodes.registerType('elliptic envelope', {
+		category: 'machine learning',
+		color: '#C0C0C0',
 		defaults: {
 			name: { value: "" },
 			savePath: { value: "" },
 			saveName: { value: "" },
-			maxDepth: { value: "" },
-			criterion: { value: "gini" },
-			splitter: { value: "best" }
+			contamination: { value: "" },
+			centered: { value: "" },
+			fraction: { value: "" },
+			seed: { value: "" }
 		},
 		inputs: 1,
 		outputs: 2,
 		icon: "file.png",
 		label: function () {
-			return this.name || "decision tree classifier";
+			return this.name || "elliptic envelope";
 		}
 	});
 </script>
 
-<script type="text/x-red" data-template-name="decision tree classifier">
+<script type="text/x-red" data-template-name="elliptic envelope">
 	<div class="form-row">
 		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
@@ -33,27 +34,25 @@
 		<input type="text" id="node-input-saveName" placeholder="Save name">
 	</div>
 	<div class="form-row">
-		<label for="node-input-maxDepth"><i class="icon-tag"></i>Max depth</label>
-		<input type="number" id="node-input-maxDepth" placeholder="Max depth of the tree.">
+		<label for="node-input-contamination"><i class="icon-tag"></i>Contamination</label>
+		<input type="text" id="node-input-contamination" placeholder="0.1">
 	</div>
 	<div class="form-row">
-		<label for="node-input-criterion"><i class="icon-tag"></i>Criterion</label>
-		<select id="node-input-criterion">
-			<option value="gini" selected>gini</option>
-			<option value="entropy">entropy</option>
-		</select>
+        <label for="node-input-centered"><i class="icon-tag"></i>Assume centered</label>
+        <input type="checkbox" id="node-input-centered">
+    </div>
+	<div class="form-row">
+		<label for="node-input-fraction"><i class="icon-tag"></i>Support fraction</label>
+		<input type="text" id="node-input-fraction" placeholder="">
 	</div>
 	<div class="form-row">
-		<label for="node-input-splitter"><i class="icon-tag"></i>Splitter</label>
-		<select id="node-input-splitter">
-			<option value="best" selected>best</option>
-			<option value="random">random</option>
-		</select>
+		<label for="node-input-seed"><i class="icon-tag"></i>Seed</label>
+		<input type="number" id="node-input-seed" placeholder="">
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="decision tree classifier">
-	<p>A node that trains a Decision Tree Classifier model.</p>
+<script type="text/x-red" data-help-name="elliptic envelope">
+	<p>A node that trains an Elliptic Envelope model for outlier detection.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -81,10 +80,10 @@
 
 	<h3>Details</h3>
 	<p>
-		<code>msg.payload</code> is an array containing training cases with labels.
+		<code>msg.payload</code> is an array containing training cases.
 	</p>
 	<p>
-		This node fits a decision tree classifier to such array in order to match the labels.
+		This node fits a elliptic envelope to such array in order to permorm outlier detection.
 	</p>
 
 	<h3>References</h3>

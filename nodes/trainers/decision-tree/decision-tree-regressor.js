@@ -1,5 +1,5 @@
 module.exports = function (RED) {
-	function kNCNode(config) {
+	function dTCNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
@@ -8,15 +8,16 @@ module.exports = function (RED) {
 		//set configurations
 		node.file = __dirname + '/../trainer.py'
 		node.config = {
-			algorithm: 'k-neighbors-classifier',
+			algorithm: 'decision-tree-regressor',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
-				n_neighbors: parseInt(config.neighbors) || undefined,
-				weights: config.weights || undefined
+				max_depth: parseInt(config.depth) || undefined,
+				criterion: config.criterion || undefined,
+				splitter: config.splitter || undefined
 			}
 		}
 
 		utils.run(RED, node, config)
 	}
-	RED.nodes.registerType("k neighbors classifier", kNCNode);
+	RED.nodes.registerType("decision tree regressor", dTCNode)
 }

@@ -1,14 +1,14 @@
-module.exports = function(RED){
-	function eECNode(config){
+module.exports = function (RED) {
+	function eECNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
 		var node = this;
 
 		//set configurations
-		node.file = __dirname +  '/../trainer.py'
+		node.file = __dirname + '/../trainer.py'
 		node.config = {
-			classifier: 'elliptic-envelope-classifier',
+			algorithm: 'elliptic-envelope',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
 				assume_centered: Boolean(config.centered) || undefined,
@@ -20,5 +20,5 @@ module.exports = function(RED){
 
 		utils.run(RED, node, config)
 	}
-	RED.nodes.registerType("elliptic envelope classifier", eECNode)
+	RED.nodes.registerType("elliptic envelope", eECNode)
 }

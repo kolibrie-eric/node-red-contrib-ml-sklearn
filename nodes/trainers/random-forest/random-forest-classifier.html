@@ -1,20 +1,20 @@
 <script type="text/javascript">
-	RED.nodes.registerType('random forest classifier',{
-		category: 'machine learning',
+	RED.nodes.registerType('random forest classifier', {
+		category: 'classifier',
 		color: '#DAC4B4',
 		defaults: {
-			name: {value:""},
-			savePath: {value:""},
-			saveName: {value:""},
-			criterion: {value:"gini"},
-			numTrees: {value:""},
-			maxDepth: {value:""}
+			name: { value: "" },
+			savePath: { value: "" },
+			saveName: { value: "" },
+			criterion: { value: "gini" },
+			numTrees: { value: "" },
+			maxDepth: { value: "" }
 		},
-		inputs:1,
-		outputs:2,
+		inputs: 1,
+		outputs: 2,
 		icon: "file.png",
-		label: function() {
-			return this.name||"random forest classifier";
+		label: function () {
+			return this.name || "random forest classifier";
 		}
 	});
 </script>

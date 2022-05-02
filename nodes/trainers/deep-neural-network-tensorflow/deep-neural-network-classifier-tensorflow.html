@@ -1,23 +1,23 @@
 <script type="text/javascript">
-RED.nodes.registerType('deep neural network classifier tensorflow',{
-  category: 'machine learning',
-  color: '#DAC4B4',
-  defaults: {
-    name: {value:""},
-    savePath: {value:""},
-    saveName: {value:""},
-    layers: {value:""},
-    learningRate: {value:""},
-    steps: {value:""},
-    batchSize: {value:""}
-  },
-  inputs:1,
-  outputs:2,
-  icon: "file.png",
-  label: function() {
-    return this.name||"deep neural network classifier tensorflow";
-  }
-});
+  RED.nodes.registerType('deep neural network classifier tensorflow', {
+    category: 'classifier',
+    color: '#DAC4B4',
+    defaults: {
+      name: { value: "" },
+      savePath: { value: "" },
+      saveName: { value: "" },
+      layers: { value: "" },
+      learningRate: { value: "" },
+      steps: { value: "" },
+      batchSize: { value: "" }
+    },
+    inputs: 1,
+    outputs: 2,
+    icon: "file.png",
+    label: function () {
+      return this.name || "deep neural network classifier tensorflow";
+    }
+  });
 </script>
 
 <script type="text/x-red" data-template-name="deep neural network classifier tensorflow">
