@@ -52,6 +52,6 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/GabrieleMaurina/node-red-contrib-machine-learning.git"
+		"url": "https://github.com/kolibrie-eric/node-red-contrib-machine-learning"
 	}
 }
