@@ -1,16 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "images"
-		},
-		{
-			"path": "nodes"
-		},
-		{
-			"path": "test"
-		},
-		{
-			"path": "utils"
+			"path": "."
 		}
 	]
 }
