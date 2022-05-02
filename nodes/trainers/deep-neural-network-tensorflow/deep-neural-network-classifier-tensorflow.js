@@ -1,15 +1,15 @@
-module.exports = function(RED){
-	function dNNCTNode(config){
+module.exports = function (RED) {
+	function dNNCTNode(config) {
 		const path = require('path')
 		const utils = require('../../../utils/utils')
 
 		var node = this;
 
 		//set configurations
-		node.file = __dirname +  '/../trainer.py'
+		node.file = __dirname + '/../trainer.py'
 
 		node.config = {
-			classifier: 'deep-neural-network-classifier-tensorflow',
+			algorithm: 'deep-neural-network-classifier-tensorflow',
 			save: path.join(config.savePath, config.saveName),
 			kwargs: {
 				layers: utils.listOfInt(config.layers) || undefined,
