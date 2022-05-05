@@ -1,0 +1,83 @@
+<script type="text/javascript">
+    RED.nodes.registerType('regressor', {
+        category: 'machine learning',
+        color: '#3499cd',
+        defaults: {
+            name: { value: "" },
+            algorithm: { value: "random-forest-regressor" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "font-awesome/fa-line-chart",
+        label: function () {
+            return this.name || "regressor";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="regressor">
+	<div class="form-row">
+		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+    <div class="form-row">
+        <label for="node-input-algorithm"><i class="fa fa-cogs"></i></label>
+        <select id="node-input-algorithm" style="width:70%;">
+            <option value="random-forest-regressor">Random forest</option>
+            <option value="decision-tree-regressor">Decision tree</option>
+            <option value="multi-layer-perceptron-regressor">Multi-layer perceptron</option>
+            <option value="support-vector-regressor">Support vector</option>
+            <option value="k-neighbours-regressor">K-neighbours</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="regressor">
+	<p>A node that trains the selected scikit-learn regressor algorithm. After loading the data into a pandas dataframe, the node will call the fit (<a href="https://scikit-learn.org/0.16/modules/generated/sklearn.ensemble.RandomForestRegressor.html#sklearn.ensemble.RandomForestRegressor.fit">example</a>) function of the algorithm. The trained model is stored in a pickle file on disk in the node red user directory</p>
+
+    <h3>Configuration</h3>
+    <dl class="message-properties">
+		<dt>name<span class="property-type">string</span>
+		</dt>
+		<dd>The name of the node</dd>
+		<dt>algorithm<span class="property-type">string</span>
+		</dt>
+		<dd>The name of the scikit-learn regressor algorithm to train</dd>
+    </dl>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+		<dt>payload
+			<span class="property-type">table</span>
+		</dt>
+		<dd>The training dataset. The (preferred) format is<br><br><code>[{column1:value, column2: value, ...}{column1:value, column2: value, ...}]</code><br><br>
+			The last column should be the y-variable. All the other columns will be treated as x-values. The python script will turn the payload into a dataframe.
+		</dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<ol class="node-ports">
+		<dl class="message-properties">
+			<dt>payload <span class="property-type">string</span></dt>
+			<dd>The full file name of the trained model. The file name is based on the node id to make it unique across all flows.</dd>
+			<dt>topic <span class="property-type">string</span></dt>
+			<dd>Upon success, the topic is set to the type of algorithm that was used to train the model</dd>
+		</dl>
+	</ol>
+
+	<h3>Details</h3>
+	<p>
+		Additional (constructor)parameters can be specified via the input message. See the scikit-learn documentation for the available parameters per algorithm.<br><br>
+        For example, if you want to pass the number of estimators to the constructor of the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">Random forest regressor</a> specify the n_estimators property in the message:<br><br>
+
+        <code>msg.n_estimators = 200</code><br><br>
+
+        Anything that is not the topic or payload of the message will be passed as an argument to the constructor!<br><br>
+
+        if you specify a value for the 'index' property of the message, the dataframe, will be reindexed using the column name specified by the index property.<br><br>
+
+        if you want to change the type of one or more columns of the dataframe in python, specify an <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html">astype</a> property<br><br>
+
+        <code>msg.astype = {'col1': 'int', 'col2': 'datetime'}</code>
+	</p>
+</script>

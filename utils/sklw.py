@@ -1,34 +1,38 @@
-#SciKit-Learn models' wrapper
-
+# SciKit-Learn models' wrapper
 import pickle
 import os
 
+
 class SKLW:
-	def __init__(self, path, model=None):
-		self.path = path
-		if model is not None:
-			self.model = model
-		else:
-			self.last = os.stat(self.path).st_mtime
-			self.model = pickle.load(open(self.path, "rb"))
+    def __init__(self, config, model=None):
+        self.config = config
+        self.path = self.config["path"]
 
-	def fit(self, x, y=None):
-		if y is not None:
-			self.model.fit(x, y)
-		else:
-			self.model.fit(x)
+        if model is not None:
+            self.model = model
+        else:
+            file = self.config["file"]
+            self.last = os.stat(file).st_mtime
+            self.model = pickle.load(open(file, "rb"))
 
-		dir = os.path.dirname(self.path)
-		if not os.path.isdir(dir):
-			os.makedirs(dir, exist_ok=True)
+    def fit(self, x, y=None):
+        if y is not None:
+            self.model.fit(x, y)
+        else:
+            self.model.fit(x)
 
-		pickle.dump(self.model, open(self.path, "wb"))
+        # Create a file with the name of the node
+        file = self.config["id"] + ".pickle"
+        fullname = os.path.join(self.path, file)
+        pickle.dump(self.model, open(fullname, "wb"))
+        return fullname
 
-	def predict(self, x):
-		return self.model.predict(x).tolist()
+    def predict(self, x):
+        return self.model.predict(x).tolist()
 
-	def update(self):
-		modified = os.stat(self.path).st_mtime
-		if(modified > self.last):
-			self.last = modified
-			self.model = pickle.load(open(self.path, "rb"))
+    def update(self):
+        file = self.config["file"]
+        modified = os.stat(file).st_mtime
+        if modified > self.last:
+            self.last = modified
+            self.model = pickle.load(open(file, "rb"))

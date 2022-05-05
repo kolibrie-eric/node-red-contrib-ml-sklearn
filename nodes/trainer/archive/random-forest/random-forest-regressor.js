@@ -9,9 +9,8 @@ module.exports = function (RED) {
 		node.file = __dirname + '/../trainer.py'
 		node.config = {
 			algorithm: 'random-forest-regressor',
-			save: path.join(config.savePath, config.saveName),
+			index: config.indexColumn,
 			kwargs: {
-				criterion: config.criterion,
 				max_depth: parseInt(config.maxDepth) || undefined,
 				n_estimators: parseInt(config.numTrees) || undefined
 			}

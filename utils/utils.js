@@ -1,116 +1,92 @@
 const status = require('./status.js')
-const {spawn} = require('child_process')
+const { spawn } = require('child_process')
 
 //use 'python3' on linux and 'python' on anything else
 const pcmd = process.platform === 'linux' ? 'python3' : 'python'
 
 //initialize child process
-const initProc = (node) => {
-	if (node.proc == null){
-		node.proc = spawn(pcmd, [node.file], ['pipe', 'pipe','pipe'])
+const create_python_process = (node) => {
+	if (node.proc === undefined) {
+		// node.file contains the python script to execute
+		node.proc = spawn(pcmd, [node.file], ['pipe', 'pipe', 'pipe'])
 
-		//handle results
+		// Handle results
 		node.proc.stdout.on('data', (data) => {
-		  node.status(status.DONE)
-			try{
-				node.msg.payload = JSON.parse(data.toString())
+			node.status(status.DONE)
+			let msg = {}
+			try {
+				// Try to parse the return string as a JSON string
+				data = JSON.parse(data.toString())
+				msg.payload = data.payload
+				msg.topic = data.topic
 			}
-			catch(err){
-				node.msg.payload = data.toString()
-			}
-			var msg = node.msg
-			if(node.wires.length > 1){
-				msg = [node.msg, null]
+			catch (err) {
+				// JSON parse not succesfull. Just return the result string
+				msg.payload = data.toString()
 			}
 			node.send(msg)
 		})
 
-		//handle errors
+		// Handle errors
 		node.proc.stderr.on('data', (data) => {
 			node.status(status.ERROR)
-			try{
-				node.msg.payload = JSON.parse(data.toString())
-			}
-			catch(err){
-				node.msg.payload = data.toString()
-			}
-			var msg = node.msg
-			if(node.wires.length > 1){
-				msg = [null, node.msg]
-			}
-			node.send(msg)
+			console.error(data.toString())
 		})
 
-		//handle crashes
+		// Handle crashes
 		node.proc.on('exit', () => {
-		  node.proc = null
+			delete node.proc
 		})
-
-		//send node configurations to child
-		node.proc.stdin.write(JSON.stringify(node.config) + '\n')
 	}
 }
 
-//send payload as json to python script
-const python = (node) => {
-	initProc(node)
-	node.proc.stdin.write(JSON.stringify(node.msg.payload) + '\n')
-}
-
 module.exports = {
-	//parse string containing comma separated integers
-	listOfInt: (str) => {
-		var ints = null
-		try{
-			ints = str.replace(' ', '').split(',').map((n) => parseInt(n))
-			if(ints.some(isNaN)){
-				ints = null
-			}
-		}
-		finally{
-			return ints
-		}
-	},
-
-	//initialize node
+	// Initialize node
 	run: (RED, node, config) => {
-	  RED.nodes.createNode(node, config)
+		RED.nodes.createNode(node, config)
 		node.status(status.NONE)
 
-		node.proc = null
-		node.msg = {}
-		initProc(node)
+		// Use the user directory as the default path to store 
+		node.config.path = RED.settings.userDir
 
-		//process message
-		const handle = (msg) => {
-			node.status(status.PROCESSING)
-			node.msg = msg
-			if(node.topic != undefined){
-				node.msg.topic = node.topic
-			}
-			//send to python child
-			python(node)
-		}
+		// The id of the node is used to give the model file a unique name
+		node.config.id = node.id
 
-		//handle input
+		// Initalize child process
+		create_python_process(node)
+
+		// Send the configuration and parameters to child process 
+		node.proc.stdin.write(JSON.stringify(node.config) + '\n')
+
+		// Handle input
 		node.on('input', (msg) => {
-			//if the node requires preprocessing of message, call preMsg
-			if(node.preMsg != undefined){
-				node.preMsg(msg, handle)
+			node.status(status.PROCESSING)
+			create_python_process(node)
+
+			// Go through all the message properties and add everything but the 
+			// standard properties to the kwargs argument passed to the python script
+			let kwargs = {}
+			for (const [key, value] of Object.entries(msg)) {
+				if (key != 'payload' && key != 'topic' && key != '_msgid') {
+					kwargs[key] = value
+				}
 			}
-			else{
-				handle(msg)
-			}
+
+			// Send the message to the python script
+			const args = { payload: JSON.stringify(msg.payload), kwargs: kwargs }
+
+			// Send message to child process (containing the data)
+			node.proc.stdin.write(JSON.stringify(args) + '\n')
 		})
 
-		//when node is closed, kill child process
+		// When node is closed, kill child process
 		node.on('close', (done) => {
 			node.status(status.NONE)
-			if(node.proc != null){
+			if (node.proc != null) {
 				node.proc.kill()
 				node.proc = null
 			}
 			done()
-    })
+		})
 	}
 }
