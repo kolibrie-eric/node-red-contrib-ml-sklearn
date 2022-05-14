@@ -1,6 +1,5 @@
 module.exports = function (RED) {
   function predictorNode(config) {
-    const path = require('path')
     const utils = require('../../utils/utils')
 
     const node = this;
@@ -10,7 +9,6 @@ module.exports = function (RED) {
     node.topic = 'predicted'
     node.config = {
       name: config.name,
-      file: config.modelfile
     }
 
     utils.run(RED, node, config)

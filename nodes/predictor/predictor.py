@@ -5,16 +5,13 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../utils")
 from sklw import SKLW
+import utils
+import importlib
 
-# read configuration
-config = json.loads(input())
+importlib.reload(utils)
 
-# wait for message input
-while True:
-    data = json.loads(input())
-    payload = data["payload"]
-    kwargs = data["kwargs"]
-
+# define processing function
+def process_input(kwargs, config, payload):
     # load data from request
     df = pandas.read_json(payload, orient="values")
 
@@ -37,8 +34,10 @@ while True:
     config["file"] = kwargs["modelfile"]
     model = SKLW(config)
 
-    # Make the prediction and send the result
-    msg = {}
-    msg["payload"] = model.predict(df)
-    msg["topic"] = type(model.model).__name__
-    print(json.dumps(msg))
+    # Make the prediction and send the result. The first return value (payload) is the prediction.
+    # The second one (topic), the name of the model/algorithm used
+    return model.predict(df), type(model.model).__name__
+
+
+# Process input
+utils.wait_for_input(process_input)

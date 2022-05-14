@@ -1,16 +1,202 @@
 <script type="text/javascript">
+    const parametersPerAlgorithm = {
+        "random-forest-regressor": [
+            "bootstrap",
+            "ccp_alpha",
+            "criterion",
+            "max_depth",
+            "max_features",
+            "max_leaf_nodes",
+            "max_samples",
+            "min_impurity_decrease",
+            "min_samples_leaf",
+            "min_samples_split",
+            "min_weight_fraction_leaf",
+            "n_estimators",
+            "n_jobs",
+            "oob_score",
+            "random_state",
+            "verbose",
+            "warm_start"
+        ],
+        "decision-tree-regressor": [
+            "ccp_alpha",
+            "criterion",
+            "max_depth",
+            "max_features",
+            "max_leaf_nodes",
+            "min_impurity_decrease",
+            "min_samples_leaf",
+            "min_samples_split",
+            "min_weight_fraction_leaf",
+            "random_state",
+            "splitter"
+        ],
+        "multi-layer-perceptron-regressor": [
+            "activation",
+            "alpha",
+            "batch_size",
+            "beta_1",
+            "beta_2",
+            "early_stopping",
+            "epsilon",
+            "hidden_layer_sizes",
+            "learning_rate",
+            "learning_rate_init",
+            "max_iter",
+            "momentum",
+            "n_iter_no_change",
+            "nesterovs_momentum",
+            "power_t",
+            "random_state",
+            "shuffle",
+            "solver",
+            "tol",
+            "validation_fraction",
+            "verbose",
+            "warm_start",
+            "max_fun"
+        ],
+        "support-vector-regressor": [
+            "C",
+            "cache_size",
+            "coef0",
+            "degree",
+            "epsilon",
+            "gamma",
+            "kernel",
+            "max_iter",
+            "shrinking",
+            "tol",
+            "verbose"
+        ],
+        "k-neighbours-regressor": [
+            "algorithm",
+            "leaf_size",
+            "metric",
+            "metric_param",
+            "n_jobs",
+            "n_neighbors",
+            "p",
+            "weights"
+        ]
+    }
+
+    function algorithmExportRule(node) {
+        const parameter = node.find(".column-select-parameter").find(":selected").val();
+        const value = node.find(".column-input-value").val();
+        const r = { p: parameter, v: value };
+        return r;
+    }
+
     RED.nodes.registerType('regressor', {
         category: 'machine learning',
         color: '#3499cd',
         defaults: {
             name: { value: "" },
-            algorithm: { value: "random-forest-regressor" }
+            algorithm: { value: "random-forest-regressor" },
+            rules: { value: [{ p: "", v: "" }] },
         },
         inputs: 1,
         outputs: 1,
         icon: "font-awesome/fa-line-chart",
         label: function () {
             return this.name || "regressor";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function () {
+            let node = this;
+            let previous = ""
+
+            // Editable list functions
+            $("#node-input-parameter-container").css('min-height', '250px').css('min-width', '450px').editableList({
+                addItem: function (container, i, opt) {
+                    if (!opt.hasOwnProperty('r')) opt.r = {};
+                    opt.element = container;
+                    let rule = opt.r;
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        display: "flex",
+                        "align-items": "center"
+                    });
+                    let inputRows = $('<div></div>', { style: "flex-grow:1" }).appendTo(container);
+                    let row = $('<div></div>', { style: "display: flex;" }).appendTo(inputRows);
+
+                    // Parameter
+                    if (!rule.hasOwnProperty('p')) rule.p = "";
+                    let parameterField = $('<select/>', { class: "column-select-parameter", style: "width:200px; text-align: left;margin-right:10px" }).appendTo(row);
+                    let group0 = $('<optgroup/>', { label: "Parameter" }).appendTo(parameterField);
+                    const algorithm = $('#node-input-algorithm').find(":selected").val();
+                    const parameters = parametersPerAlgorithm[algorithm];
+                    for (j = 0; j < parameters.length; j++) {
+                        group0.append($("<option></option>").val(parameters[j]).text(parameters[j]));
+                    }
+                    parameterField.val(rule.p);
+                    parameterField.on("change", function (e) {
+                        const elem = e.target;
+                        rule.p = elem.value;
+                        node.rules[node.rules.length] = {}; // Trigger deployment
+                    });
+
+                    // Value
+                    if (!rule.hasOwnProperty('v')) rule.v = "";
+                    let valueField = $('<input/>', { class: "column-input-value", style: "width:calc(100% - 130px); text-align: left;margin-right:10px", placeholder: "Parameter value" }).appendTo(row);
+                    valueField.val(rule.v);
+                    valueField.on("change", function (e) {
+                        const elem = e.target;
+                        rule.v = elem.value;
+                        node.rules[node.rules.length] = {}; // Trigger deployment
+                    });
+
+                },
+                sortable: true,
+                removable: true
+            });
+            for (var i = 0; i < this.rules.length; i++) {
+                var rule = this.rules[i];
+                $("#node-input-parameter-container").editableList('addItem', { r: rule, i: i });
+            }
+            $("#node-input-algorithm").on('focus', function () {
+                // Store the current value on focus and on change
+                previous = this.value;
+            }).change(function () {
+                // Do not trigger at initialization
+                if (previous !== "") {
+                    // Clear the list of parameters
+                    $("#node-input-parameter-container").editableList('empty');
+
+                    // Add the correct parameter list to the select
+                    $("#node-input-parameter-container").editableList('addItem', { r: [], i: 0 });
+                }
+
+                // Make sure the previous value is updated
+                previous = this.value;
+            });
+        },
+        oneditsave: function () {
+            var rules = $("#node-input-parameter-container").editableList('items');
+            var node = this;
+            node.rules = [];
+            rules.each(function (i) {
+                if (this != {})
+                    node.rules.push(algorithmExportRule($(this)));
+                else
+                    node.rules.pop();
+            });
+        },
+        oneditresize: function (size) {
+            var rows = $("#dialog-form>div:not(.node-input-parameter-container-row)");
+            var height = size.height;
+            for (var i = 0; i < rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-input-parameter-container-row");
+            height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+            height += 16;
+            $("#node-input-parameter-container").editableList('height', height);
         }
     });
 </script>
@@ -30,6 +216,14 @@
             <option value="k-neighbours-regressor">K-neighbours</option>
         </select>
     </div>
+    <div class="form-row" style="margin-bottom:0;">
+        <div class="form-row" style="margin-bottom:0;">
+          <label><i class="fa fa-list"></i> Parameters</label>
+        </div>
+    </div>
+    <div class="form-row node-input-parameter-container-row">
+        <ol id="node-input-parameter-container"></ol>
+    </div>  
 </script>
 
 <script type="text/x-red" data-help-name="regressor">
@@ -43,6 +237,8 @@
 		<dt>algorithm<span class="property-type">string</span>
 		</dt>
 		<dd>The name of the scikit-learn regressor algorithm to train</dd>
+        <dt>Parameters<span class="property-type">list</span></dt>
+        <dd>A list of parameters passed to the constructor of the selected algorithm. All parameters are overrideable via a message property</dd>
     </dl>
 
 	<h3>Inputs</h3>
@@ -51,7 +247,8 @@
 			<span class="property-type">table</span>
 		</dt>
 		<dd>The training dataset. The (preferred) format is<br><br><code>[{column1:value, column2: value, ...}{column1:value, column2: value, ...}]</code><br><br>
-			The last column should be the y-variable. All the other columns will be treated as x-values. The python script will turn the payload into a dataframe.
+			The last column should be the y-variable. All the other columns will be treated as x-values. The python script will turn the payload into a dataframe.<br><br>
+            If the payload is a (pickle) filename, produced by the dataframe node, the data will be loaded from that file
 		</dd>
 	</dl>
 
@@ -67,17 +264,11 @@
 
 	<h3>Details</h3>
 	<p>
-		Additional (constructor)parameters can be specified via the input message. See the scikit-learn documentation for the available parameters per algorithm.<br><br>
-        For example, if you want to pass the number of estimators to the constructor of the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">Random forest regressor</a> specify the n_estimators property in the message:<br><br>
+		Additional (constructor)parameters can be specified via the input message or via the node configuration. See the scikit-learn documentation for the available parameters per algorithm.<br><br>
+        For example, if you want to pass the number of estimators to the constructor of the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">Random forest regressor</a> specify the n_estimators property in the message (or configure it via the node configuration):<br><br>
 
         <code>msg.n_estimators = 200</code><br><br>
 
         Anything that is not the topic or payload of the message will be passed as an argument to the constructor!<br><br>
-
-        if you specify a value for the 'index' property of the message, the dataframe, will be reindexed using the column name specified by the index property.<br><br>
-
-        if you want to change the type of one or more columns of the dataframe in python, specify an <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html">astype</a> property<br><br>
-
-        <code>msg.astype = {'col1': 'int', 'col2': 'datetime'}</code>
 	</p>
 </script>

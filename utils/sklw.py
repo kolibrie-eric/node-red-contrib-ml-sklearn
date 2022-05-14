@@ -21,10 +21,13 @@ class SKLW:
         else:
             self.model.fit(x)
 
+        return self.save(self.model)
+
+    def save(self, obj):
         # Create a file with the name of the node
         file = self.config["id"] + ".pickle"
         fullname = os.path.join(self.path, file)
-        pickle.dump(self.model, open(fullname, "wb"))
+        pickle.dump(obj, open(fullname, "wb"))
         return fullname
 
     def predict(self, x):

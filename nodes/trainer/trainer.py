@@ -6,6 +6,10 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../utils")
 from sklw import SKLW
+import utils
+import importlib
+
+importlib.reload(utils)
 
 OUTLIER_DETECTORS = [
     "elliptic-envelope",
@@ -13,32 +17,17 @@ OUTLIER_DETECTORS = [
     "one-class-support-vector",
 ]
 
-# read configurations
-config = json.loads(input())
-
-while True:
-    # read request (wait forever until input is provided)
-    data = json.loads(input())
-    kwargs = data["kwargs"]
-    payload = data["payload"]
-
-    # load data from request
-    df = pandas.read_json(payload, orient="values")
-
-    # Check if we need to retype one or more columens
-    if "astype" in kwargs:
-        try:
-            arg = json.loads(kwargs["astype"])
-        except:
-            arg = kwargs["astype"]
-        df = df.astype(dtype=arg)
-        del kwargs["astype"]
-
-    # Reindex the dataframe if an index column is specified
-    if "index" in kwargs:
-        index_column = kwargs["index"]
-        df = df.set_index(index_column)
-        del kwargs["index"]
+# define processing function
+def process_input(kwargs, config, payload):
+    try:
+        # Try to load the data from file. Sometimes the payload is wrapped in "". Remove those
+        file = payload.replace('"', "")
+        store = pandas.HDFStore(file)
+        df = store["df"]
+        # os.chdir(cd)
+    except Exception as e:
+        # load data from request
+        df = pandas.read_json(payload, orient="values")
 
     # The outlier algorithms expect the full dataframe
     if config["algorithm"] in OUTLIER_DETECTORS:
@@ -107,11 +96,10 @@ while True:
 
         algorithm = SKLW(config, model=KNeighborsRegressor(**kwargs))
 
-    # train model
-    file = algorithm.fit(x, y)
+    # Train the model and send the result. The first return value (payload) is the file name of trained model.
+    # The second one (topic), the name of the model/algorithm used
+    return algorithm.fit(x, y), config["algorithm"]
 
-    # output a message containing the file name of the model and marking the training as completed
-    msg = {}
-    msg["payload"] = file
-    msg["topic"] = config["algorithm"]
-    print(json.dumps(msg))
+
+# Process input
+utils.wait_for_input(process_input)

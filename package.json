@@ -9,8 +9,6 @@
 	"keywords": [
 		"node-red",
 		"machine learning",
-		"ml",
-		"tensorflow",
 		"scikit learn",
 		"scikit",
 		"sklearn",
@@ -28,7 +26,8 @@
 	"node-red": {
 		"nodes": {
 			"regressor": "nodes/trainer/regressor.js",
-			"predictor": "nodes/predictor/predictor.js"
+			"predictor": "nodes/predictor/predictor.js",
+			"dataframe": "nodes/dataframe/dataframe.js"
 		}
 	},
 	"dependencies": {

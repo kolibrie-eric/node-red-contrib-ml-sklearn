@@ -1,0 +1,204 @@
+<script type="text/javascript">
+  function dataframeExportRule(node) {
+    var name = node.find(".column-input-name").val();
+    var type = node.find(".column-selector-type").val();
+    var shift = node.find(".column-input-shift").val();
+    var index = node.find(".column-input-index").is(":checked");
+    var r = { c: name, t: type, s: shift, i: index };
+    return r;
+  }
+
+  RED.nodes.registerType('dataframe', {
+    category: 'machine learning',
+    color: '#3499cd',
+    defaults: {
+      name: { value: "" },
+      rules: { value: [{ c: "", t: "", s: "", i: false }] },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "font-awesome/fa-line-chart",
+    label: function () {
+      return this.name || "dataframe";
+    },
+    labelStyle: function () {
+      return this.name ? "node_label_italic" : "";
+    },
+    oneditprepare: function () {
+      var node = this;
+
+      $("#node-input-rule-container").css('min-height', '250px').css('min-width', '450px').editableList({
+        addItem: function (container, i, opt) {
+          if (!opt.hasOwnProperty('r')) opt.r = {};
+          opt.element = container;
+          var rule = opt.r;
+          container.css({
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            display: "flex",
+            "align-items": "center"
+          });
+          let inputRows = $('<div></div>', { style: "flex-grow:1" }).appendTo(container);
+          let row = $('<div></div>', { style: "display: flex;" }).appendTo(inputRows);
+
+          // Option: name of the column
+          if (!rule.hasOwnProperty('c')) rule.c = "";
+          let inputField = $('<input/>', { class: "column-input-name", style: "width:calc(100% - 130px); text-align: left;margin-right:10px", placeholder: "Column name" }).appendTo(row);
+          inputField.val(rule.c);
+          inputField.on("change", function (e) {
+            const elem = e.target;
+            rule.c = elem.value;
+            node.rules[node.rules.length] = {}; // Trigger deployment
+          });
+
+          // Option: (re)type the column
+          if (!rule.hasOwnProperty('t')) rule.t = "";
+          let selectFieldType = $('<select/>', { class: "column-selector-type", style: "width:110px; text-align: left;margin-right:10px" }).appendTo(row);
+          var group0 = $('<optgroup/>', { label: "Pandas dtype" }).appendTo(selectFieldType);
+          group0.append($('<option selected="selected"></option>').val('').text(''));
+          group0.append($("<option></option>").val('object').text('string'));
+          group0.append($("<option></option>").val('int64').text('int'));
+          group0.append($("<option></option>").val('float64').text('float'));
+          group0.append($("<option></option>").val('bool').text('bool'));
+          group0.append($("<option></option>").val('datetime64').text('datetime'));
+          group0.append($("<option></option>").val('timedelta').text('timedelta'));
+          group0.append($("<option></option>").val('category').text('category'));
+          selectFieldType.val(rule.t);
+          selectFieldType.on("change", function (e) {
+            const elem = e.target;
+            rule.t = elem.value;
+            node.rules[node.rules.length] = {}; // Trigger deployment
+          });
+
+          // Option: shift of the column
+          if (!rule.hasOwnProperty('s')) rule.s = "";
+          let selectFieldInputShift = $('<input/>', { class: "column-input-shift", list: "column-selector-shift-" + i, style: "width:50px; text-align: center;margin-right:5px" }).appendTo(row);
+          let selectFieldShift = $('<datalist/>', { id: "column-selector-shift-" + i, class: "column-selector-shift", style: "width:60px; text-align: center;margin-right:5px" }).appendTo(row);
+          var group1 = $('<optgroup/>', { label: "Shift" }).appendTo(selectFieldShift);
+          for (j = 0; j < 33; j++) {
+            let val = j - 16;
+            if (val === 0)
+              group1.append($('<option selected="selected"></option>').val(val).text(val));
+            else
+              group1.append($("<option></option>").val(val).text(val));
+          }
+          selectFieldInputShift.val(rule.s);
+          selectFieldInputShift.on("change", function (e) {
+            const elem = e.target;
+            rule.s = elem.value;
+            node.rules[node.rules.length] = {}; // Trigger deployment
+          });
+
+          // Option: reindex the dataframe
+          if (!rule.hasOwnProperty('i')) rule.i = false;
+          let checkbox = $('<input />', { id: "column-input-index-" + i, class: "column-input-index", type: "checkbox", style: "margin-right:5px;margin-top:10px;width:40px" }).appendTo(row);
+          checkbox.prop('checked', rule.i);
+
+          checkbox.on("change", function (e) {
+            const elem = e.target;
+            const isChecked = elem.checked;
+            rule.i = isChecked;
+            // Make sure that only one index checkbox is checked
+            if (isChecked) {
+              let selectors = $(".column-input-index");
+              // Uncheck all but this selector
+              for (i = 0; i < selectors.length; i++)
+                if (elem.id != selectors[i].id)
+                  selectors[i].checked = false;
+            }
+            node.rules[node.rules.length] = {}; // Trigger deployment
+          });
+        },
+        sortable: true,
+        removable: true
+      });
+
+      for (var i = 0; i < this.rules.length; i++) {
+        var rule = this.rules[i];
+        $("#node-input-rule-container").editableList('addItem', { r: rule, i: i });
+      }
+    },
+    oneditsave: function () {
+      var rules = $("#node-input-rule-container").editableList('items');
+      var node = this;
+      node.rules = [];
+      rules.each(function (i) {
+        if (this != {})
+          node.rules.push(dataframeExportRule($(this)));
+        else
+          node.rules.pop();
+      });
+      // this.propertyType = $("#node-input-property").typedInput('type');
+    },
+    oneditresize: function (size) {
+      var rows = $("#dialog-form>div:not(.node-input-rule-container-row)");
+      var height = size.height;
+      for (var i = 0; i < rows.length; i++) {
+        height -= $(rows[i]).outerHeight(true);
+      }
+      var editorRow = $("#dialog-form>div.node-input-rule-container-row");
+      height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+      height += 16;
+      $("#node-input-rule-container").editableList('height', height);
+    }
+  })
+</script>
+
+<script type="text/x-red" data-template-name="dataframe">
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i>Name</label>
+    <input type="text" id="node-input-name" style="width: calc(100% - 105px)" placeholder="Name">
+  </div>
+  <div class="form-row" style="margin-bottom:0;">
+    <div class="form-row" style="margin-bottom:0;">
+      <label><i class="fa fa-list"></i> <span data-i18n="change.label.rules">Actions</span></label>
+    </div>
+  </div>
+  <div style="display:flex">
+    <div style="display:flex;margin-left:30px;width:100%">
+      <span style="width:calc(99% - 272px);margin-right:10px"><b>Column</b></span>
+      <span style="width:110px;margin-right:10px"><b>Type</b></span>
+      <span style="width:60px;margin-right:5px"><b>Shift</b></span>
+      <span style="width:40px;margin-right:5px"><b>Index</b></span>
+    </div>
+  </div>
+  <div class="form-row node-input-rule-container-row">
+      <ol id="node-input-rule-container"></ol>
+  </div>
+</script>
+
+<script type="text/x-red" data-help-name="dataframe">
+  <p>Loads the payload data into a dataframe</p>
+	<h3>Configuration</h3>
+	<dl class="message-properties">
+		<dt>Name<span class="property-type">string</span></dt>
+		<dd>The name of the node</dd>
+    <dt>Actions</dt>
+    <dd>A list of column transformations to execute after the data has been loaded</dd>
+	</dl>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+		<dt>payload
+			<span class="property-type">table</span>
+		</dt>
+		<dd>The data to load into the dataframe</dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<ol class="node-ports">
+		<dl class="message-properties">
+			<dt>payload <span class="property-type">array</span></dt>
+			<dd>A dictionary created from the dataframe</dd>
+		</dl>
+	</ol>
+
+	<h3>Details</h3>
+	<p>
+    This node is typically used as input for the trainer and regressor nodes.<br><br>
+    The node first loads the data from the payload into a dataframe. After that the following actions are performed on the dataframe in order of appearance:<br><br>
+    - Retype of one or more columns (see also <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html">astype</a>)<br>
+    - Set the index of the dataframe (see also <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.set_index.html">set_index</a>)<br>
+    <!-- - Scalar math operations (mul, add, sub, etc.) (see for example <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.mul.html">mul</a>)<br> -->
+	</p>
+</script>
