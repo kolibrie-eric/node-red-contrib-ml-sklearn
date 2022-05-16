@@ -106,10 +106,6 @@ def process_input(kwargs, config, topic, payload):
         from sklearn.tree import DecisionTreeClassifier
 
         model = SKLW(config, model=DecisionTreeClassifier(**kwargs))
-    elif algorithm == "deep-neural-network-classifier-tensorflow":
-        from dnnctf import DNNCTF
-
-        model = DNNCTF(config, del_prev_mod=True, **kwargs)
     elif algorithm == "k-neighbors-classifier":
         from sklearn.neighbors import KNeighborsClassifier
 
