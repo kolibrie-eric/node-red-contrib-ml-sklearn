@@ -4,7 +4,7 @@ module.exports = function (RED) {
         let node = this;
 
         //set configurations
-        node.file = __dirname + '/trainer.py'
+        node.file = __dirname + '/regressor.py'
         node.config = {
             name: config.name,
             algorithm: config.algorithm,

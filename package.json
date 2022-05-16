@@ -1,6 +1,6 @@
 {
 	"name": "node-red-contrib-ml-sklearn",
-	"version": "0.5.1",
+	"version": "0.5.2",
 	"description": "Machine learning package based on scikit-learn for node-red.",
 	"main": "index.js",
 	"scripts": {
@@ -22,11 +22,14 @@
 		"Random forest"
 	],
 	"author": "Eric Ruis",
+	"contributors": [
+		"Gabriele Maurina"
+	],
 	"license": "MIT",
 	"node-red": {
 		"nodes": {
-			"regressor": "nodes/trainer/regressor.js",
-			"classifier": "nodes/trainer/classifier.js",
+			"regressor": "nodes/regressor/regressor.js",
+			"classifier": "nodes/classifier/classifier.js",
 			"predictor": "nodes/predictor/predictor.js",
 			"dataframe": "nodes/dataframe/dataframe.js"
 		}

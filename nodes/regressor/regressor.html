@@ -1,9 +1,8 @@
 <script type="text/javascript">
-    const parametersPerAlgorithm = {
-        "random-forest-classifier": [
+    const parametersPerRegressorAlgorithm = {
+        "random-forest-regressor": [
             "bootstrap:bool",
             "ccp_alpha:float",
-            "class_weight:dict",
             "criterion:string",
             "max_depth:int",
             "max_features:int-float-string",
@@ -11,7 +10,7 @@
             "max_samples:int-float",
             "min_impurity_decrease:float",
             "min_samples_leaf:int-float",
-            "min_samples_split:int-float",
+            "min_samples_split:int",
             "min_weight_fraction_leaf:float",
             "n_estimators:int",
             "n_jobs:int",
@@ -20,9 +19,8 @@
             "verbose:int",
             "warm_start:bool"
         ],
-        "decision-tree-classifier": [
+        "decision-tree-regressor": [
             "ccp_alpha:float",
-            "class_weight:dict",
             "criterion:string",
             "max_depth:int",
             "max_features:int-float-string",
@@ -34,7 +32,7 @@
             "random_state:int",
             "splitter:string"
         ],
-        "multi-layer-perceptron-classifier": [
+        "multi-layer-perceptron-regressor": [
             "activation:string",
             "alpha:float",
             "batch_size:int-string",
@@ -42,7 +40,7 @@
             "beta_2:float",
             "early_stopping:bool",
             "epsilon:float",
-            "hidden_layer_sizes:tuple",
+            "hidden_layer_sizes",
             "learning_rate:string",
             "learning_rate_init:float",
             "max_iter:int",
@@ -59,24 +57,20 @@
             "warm_start:bool",
             "max_fun:int"
         ],
-        "support-vector-classifier": [
-            "break_ties:bool",
+        "support-vector-regressor": [
             "C:float",
             "cache_size:float",
-            "class_weight:dict-string",
             "coef0:float",
-            "decision_function_shape:string",
             "degree:int",
+            "epsilon:float",
             "gamma:float-string",
             "kernel:string",
             "max_iter:int",
-            "probability:bool",
-            "random_state:int",
             "shrinking:bool",
             "tol:float",
             "verbose:bool"
         ],
-        "k-neighbours-classifier": [
+        "k-neighbours-regressor": [
             "algorithm:string",
             "leaf_size:int",
             "metric:string",
@@ -87,26 +81,26 @@
         ]
     }
 
-    function algorithmExportRule(node) {
+    function regressorExportRule(node) {
         const parameter = node.find(".column-select-parameter").find(":selected").val();
         const value = node.find(".column-input-value").val();
         const r = { p: parameter, v: value };
         return r;
     }
 
-    RED.nodes.registerType('classifier', {
+    RED.nodes.registerType('regressor', {
         category: 'machine learning',
         color: '#3499cd',
         defaults: {
             name: { value: "" },
-            algorithm: { value: "random-forest-classifier" },
+            algorithm: { value: "random-forest-regressor" },
             rules: { value: [{ p: "", v: "" }] },
         },
         inputs: 1,
         outputs: 1,
         icon: "font-awesome/fa-line-chart",
         label: function () {
-            return this.name || "classifier";
+            return this.name || "regressor";
         },
         labelStyle: function () {
             return this.name ? "node_label_italic" : "";
@@ -135,7 +129,7 @@
                     let parameterField = $('<select/>', { class: "column-select-parameter", style: "width:200px; text-align: left;margin-right:10px" }).appendTo(row);
                     let group0 = $('<optgroup/>', { label: "Parameter" }).appendTo(parameterField);
                     const algorithm = $('#node-input-algorithm').find(":selected").val();
-                    const parameters = parametersPerAlgorithm[algorithm];
+                    const parameters = parametersPerRegressorAlgorithm[algorithm];
                     for (j = 0; j < parameters.length; j++) {
                         components = parameters[j].split(":")
                         // The text part contains the parameter name. Its value contains the type of the parameter (e.g. n_estimators:int)
@@ -189,7 +183,7 @@
             node.rules = [];
             rules.each(function (i) {
                 if (this != {})
-                    node.rules.push(algorithmExportRule($(this)));
+                    node.rules.push(regressorExportRule($(this)));
                 else
                     node.rules.pop();
             });
@@ -208,7 +202,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="classifier">
+<script type="text/x-red" data-template-name="regressor">
 	<div class="form-row">
 		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
@@ -216,11 +210,11 @@
     <div class="form-row">
         <label for="node-input-algorithm"><i class="fa fa-cogs"></i></label>
         <select id="node-input-algorithm" style="width:70%;">
-            <option value="random-forest-classifier">Random forest</option>
-            <option value="decision-tree-classifier">Decision tree</option>
-            <option value="multi-layer-perceptron-classifier">Multi-layer perceptron</option>
-            <option value="support-vector-classifier">Support vector</option>
-            <option value="k-neighbours-classifier">K-neighbours</option>
+            <option value="random-forest-regressor">Random forest</option>
+            <option value="decision-tree-regressor">Decision tree</option>
+            <option value="multi-layer-perceptron-regressor">Multi-layer perceptron</option>
+            <option value="support-vector-regressor">Support vector</option>
+            <option value="k-neighbours-regressor">K-neighbours</option>
         </select>
     </div>
     <div class="form-row" style="margin-bottom:0;">
@@ -233,8 +227,8 @@
     </div>  
 </script>
 
-<script type="text/x-red" data-help-name="classifier">
-	<p>A node that trains the selected scikit-learn classifier algorithm. After loading the data into a pandas dataframe, the node will call the fit (<a href="https://scikit-learn.org/0.16/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier.fit">example</a>) function of the algorithm. The trained model is stored in a pickle file on disk in the node red user directory</p>
+<script type="text/x-red" data-help-name="regressor">
+	<p>A node that trains the selected scikit-learn regressor algorithm. After loading the data into a pandas dataframe, the node will call the fit (<a href="https://scikit-learn.org/0.16/modules/generated/sklearn.ensemble.RandomForestRegressor.html#sklearn.ensemble.RandomForestRegressor.fit">example</a>) function of the algorithm. The trained model is stored in a pickle file on disk in the node red user directory</p>
 
     <h3>Configuration</h3>
     <dl class="message-properties">
@@ -243,7 +237,7 @@
 		<dd>The name of the node</dd>
 		<dt>algorithm<span class="property-type">string</span>
 		</dt>
-		<dd>The name of the scikit-learn classifier algorithm to train</dd>
+		<dd>The name of the scikit-learn regressor algorithm to train</dd>
         <dt>Parameters<span class="property-type">list</span></dt>
         <dd>A list of parameters passed to the constructor of the selected algorithm. All parameters are overrideable via a message property</dd>
     </dl>
@@ -272,7 +266,7 @@
 	<h3>Details</h3>
 	<p>
 		Additional (constructor)parameters can be specified via the input message or via the node configuration. See the scikit-learn documentation for the available parameters per algorithm.<br><br>
-        For example, if you want to pass the number of estimators to the constructor of the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html">Random forest classifier</a> specify the n_estimators property in the message (or configure it via the node configuration):<br><br>
+        For example, if you want to pass the number of estimators to the constructor of the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">Random forest regressor</a> specify the n_estimators property in the message (or configure it via the node configuration):<br><br>
 
         <code>msg.n_estimators = 200</code><br><br>
 
