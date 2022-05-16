@@ -10,7 +10,7 @@ import importlib
 importlib.reload(utils)
 
 # define processing function
-def process_input(kwargs, config, payload):
+def process_input(kwargs, config, topic, payload):
     # load data from request
     df = pandas.read_json(payload, orient="values")
 
@@ -45,15 +45,12 @@ def process_input(kwargs, config, payload):
     #             # print(df_shift)
 
     # Create a file with the name of the node
-    file = config["id"] + ".h5"
+    file = config["id"] + ".pickle"
     path = config["path"]
     fullname = os.path.join(path, file)
+    df.to_pickle(fullname)
 
-    store = pandas.HDFStore(fullname)
-    store["df"] = df
-    store.close()
-
-    return fullname, "dataframe"
+    return fullname, "dataframe", "done"
 
 
 # Process input

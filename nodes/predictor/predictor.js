@@ -9,6 +9,8 @@ module.exports = function (RED) {
     node.topic = 'predicted'
     node.config = {
       name: config.name,
+      orient: config.orient,
+      y_column: config.y_column
     }
 
     utils.run(RED, node, config)

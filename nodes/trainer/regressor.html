@@ -1,84 +1,82 @@
 <script type="text/javascript">
     const parametersPerAlgorithm = {
         "random-forest-regressor": [
-            "bootstrap",
-            "ccp_alpha",
-            "criterion",
-            "max_depth",
-            "max_features",
-            "max_leaf_nodes",
-            "max_samples",
-            "min_impurity_decrease",
-            "min_samples_leaf",
-            "min_samples_split",
-            "min_weight_fraction_leaf",
-            "n_estimators",
-            "n_jobs",
-            "oob_score",
-            "random_state",
-            "verbose",
-            "warm_start"
+            "bootstrap:bool",
+            "ccp_alpha:float",
+            "criterion:string",
+            "max_depth:int",
+            "max_features:int-float-string",
+            "max_leaf_nodes:int",
+            "max_samples:int-float",
+            "min_impurity_decrease:float",
+            "min_samples_leaf:int-float",
+            "min_samples_split:int",
+            "min_weight_fraction_leaf:float",
+            "n_estimators:int",
+            "n_jobs:int",
+            "oob_score:bool",
+            "random_state:int",
+            "verbose:int",
+            "warm_start:bool"
         ],
         "decision-tree-regressor": [
-            "ccp_alpha",
-            "criterion",
-            "max_depth",
-            "max_features",
-            "max_leaf_nodes",
-            "min_impurity_decrease",
+            "ccp_alpha:float",
+            "criterion:string",
+            "max_depth:int",
+            "max_features:int-float-string",
+            "max_leaf_nodes:int",
+            "min_impurity_decrease:float",
             "min_samples_leaf",
-            "min_samples_split",
-            "min_weight_fraction_leaf",
-            "random_state",
-            "splitter"
+            "min_samples_split:int-float",
+            "min_weight_fraction_leaf:float",
+            "random_state:int",
+            "splitter:string"
         ],
         "multi-layer-perceptron-regressor": [
-            "activation",
-            "alpha",
-            "batch_size",
-            "beta_1",
-            "beta_2",
-            "early_stopping",
-            "epsilon",
+            "activation:string",
+            "alpha:float",
+            "batch_size:int-string",
+            "beta_1:float",
+            "beta_2:float",
+            "early_stopping:bool",
+            "epsilon:float",
             "hidden_layer_sizes",
-            "learning_rate",
-            "learning_rate_init",
-            "max_iter",
-            "momentum",
-            "n_iter_no_change",
-            "nesterovs_momentum",
-            "power_t",
-            "random_state",
-            "shuffle",
-            "solver",
-            "tol",
-            "validation_fraction",
-            "verbose",
-            "warm_start",
-            "max_fun"
+            "learning_rate:string",
+            "learning_rate_init:float",
+            "max_iter:int",
+            "momentum:float",
+            "n_iter_no_change:int",
+            "nesterovs_momentum:bool",
+            "power_t:float",
+            "random_state:int",
+            "shuffle:bool",
+            "solver:string",
+            "tol:float",
+            "validation_fraction:float",
+            "verbose:bool",
+            "warm_start:bool",
+            "max_fun:int"
         ],
         "support-vector-regressor": [
-            "C",
-            "cache_size",
-            "coef0",
-            "degree",
-            "epsilon",
-            "gamma",
-            "kernel",
-            "max_iter",
-            "shrinking",
-            "tol",
-            "verbose"
+            "C:float",
+            "cache_size:float",
+            "coef0:float",
+            "degree:int",
+            "epsilon:float",
+            "gamma:float-string",
+            "kernel:string",
+            "max_iter:int",
+            "shrinking:bool",
+            "tol:float",
+            "verbose:bool"
         ],
         "k-neighbours-regressor": [
-            "algorithm",
-            "leaf_size",
-            "metric",
-            "metric_param",
-            "n_jobs",
-            "n_neighbors",
-            "p",
-            "weights"
+            "algorithm:string",
+            "leaf_size:int",
+            "n_jobs:int",
+            "n_neighbors:int",
+            "p:int",
+            "weights:string"
         ]
     }
 
@@ -132,7 +130,9 @@
                     const algorithm = $('#node-input-algorithm').find(":selected").val();
                     const parameters = parametersPerAlgorithm[algorithm];
                     for (j = 0; j < parameters.length; j++) {
-                        group0.append($("<option></option>").val(parameters[j]).text(parameters[j]));
+                        components = parameters[j].split(":")
+                        // The text part contains the parameter name. Its value contains the type of the parameter (e.g. n_estimators:int)
+                        group0.append($("<option></option>").val(parameters[j]).text(components[0]));
                     }
                     parameterField.val(rule.p);
                     parameterField.on("change", function (e) {

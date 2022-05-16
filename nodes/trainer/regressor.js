@@ -7,7 +7,8 @@ module.exports = function (RED) {
         node.file = __dirname + '/trainer.py'
         node.config = {
             name: config.name,
-            algorithm: config.algorithm
+            algorithm: config.algorithm,
+            parameters: config.rules
         }
 
         utils.run(RED, node, config)

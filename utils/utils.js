@@ -12,24 +12,27 @@ const create_python_process = (node) => {
 
 		// Handle results
 		node.proc.stdout.on('data', (data) => {
-			node.status(status.DONE);
 			let msg = {};
 			try {
 				// Try to parse the return string as a JSON string
 				data = JSON.parse(data.toString());
+				console.log(data);
 				try {
 					msg.payload = JSON.parse(data.payload);
 				}
 				catch (err) {
 					msg.payload = data.payload.toString();
 				}
-				msg.topic = data.topic;
 			}
 			catch (err) {
 				// JSON parse not succesfull. Just return the result string
 				msg.payload = data.toString();
 			}
-			node.send(msg)
+			msg.topic = data.topic;
+
+			node.status({ fill: "green", shape: "dot", text: data.status });
+			if (msg.payload !== null)
+				node.send(msg)
 		})
 
 		// Handle errors
@@ -78,7 +81,7 @@ module.exports = {
 			}
 
 			// Send the message to the python script
-			const args = { payload: JSON.stringify(msg.payload), kwargs: kwargs };
+			const args = { payload: JSON.stringify(msg.payload), topic: msg.topic, kwargs: kwargs };
 
 			// Send message to child process (containing the data)
 			node.proc.stdin.write(JSON.stringify(args) + '\n');

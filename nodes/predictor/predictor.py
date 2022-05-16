@@ -2,6 +2,7 @@ import json
 import pandas
 import os
 import sys
+import pickle
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../utils")
 from sklw import SKLW
@@ -11,32 +12,45 @@ import importlib
 importlib.reload(utils)
 
 # define processing function
-def process_input(kwargs, config, payload):
+def process_input(kwargs, config, topic, payload):
+    # The file containing the name of the training data file
+    file = config["id"] + ".pickle"
+    fullname = os.path.join(config["path"], file)
+
+    # Sometimes the payload is wrapped in "". Remove those
+    if payload[0] == '"':
+        payload = payload[1 : len(payload) - 1]
+
+    # If we received a trained model file, save that for later use
+    if topic == "model":
+        pickle.dump(payload, open(fullname, "wb"))
+        return None, None, "model received"
+
     # load data from request
-    df = pandas.read_json(payload, orient="values")
+    try:
+        # Try to load the data from file.
+        df = pandas.read_pickle(payload)
+    except Exception as e:
+        # load data from request
+        df = pandas.read_json(payload, orient="values")
 
-    # Check if we need to retype one or more columens
-    if "astype" in kwargs:
-        try:
-            arg = json.loads(kwargs["astype"])
-        except:
-            arg = kwargs["astype"]
-        df = df.astype(dtype=arg)
-        del kwargs["astype"]
+    # By now we should have received a training model file or one was
+    # previously stored on disk and now we have a payload to process
+    if not os.path.exists(fullname):
+        raise Exception("No training model found")
+    file = pickle.load(open(fullname, "rb"))
 
-    # Reindex the dataframe if an index column is specified
-    if "index" in kwargs:
-        index_column = kwargs["index"]
-        df = df.set_index(index_column)
-        del kwargs["index"]
-
-    # Initialize the model
-    config["file"] = kwargs["modelfile"]
+    # Initialize the model. SKLW expects the filename to be part of the configuration
+    config["file"] = file
     model = SKLW(config)
 
     # Make the prediction and send the result. The first return value (payload) is the prediction.
     # The second one (topic), the name of the model/algorithm used
-    return model.predict(df), type(model.model).__name__
+    columns = df.columns
+    df[config["y_column"]] = model.predict(df)
+    payload = df.to_json(orient=config["orient"])
+
+    return payload, type(model.model).__name__, "prediction complete"
 
 
 # Process input

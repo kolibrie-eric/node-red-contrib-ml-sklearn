@@ -4,6 +4,8 @@
 		color: '#3499cd',
 		defaults: {
 			name: { value: "" },
+			orient: { value: "values" },
+			y_column: { value: "y" }
 		},
 		inputs: 1,
 		outputs: 1,
@@ -22,6 +24,21 @@
     <label for="node-input-name"><i class="icon-tag"></i>Name</label>
     <input type="text" id="node-input-name" placeholder="Name">
   </div>
+  <div class="form-row">
+    <label for="node-input-orient"><i class="icon-tag"></i>Orientation</label>
+	<select id="node-input-orient" style="width:70%;">
+		<option value="columns" selected>columns</option>
+		<option value="split">split</option>
+		<option value="records">records</option>
+		<option value="index">index</option>
+		<option value="values">values</option>
+		<option value="table">table</option>
+	</select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-y_column"><i class="icon-tag"></i>Y-column</label>
+    <input type="text" id="node-input-y_column" placeholder="Name of the y-column">
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="predictor">
@@ -31,16 +48,20 @@
 		<dt>Name<span class="property-type">string</span></dt>
 		<dd>The name of the node</dd>
 	</dl>
+	<dl class="message-properties">
+		<dt>Orientation<span class="property-type">string</span></dt>
+		<dd>The <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html">orientation</a> of the json output</dd>
+	</dl>
+	<dl class="message-properties">
+		<dt>Y-column<span class="property-type">string</span></dt>
+		<dd>The name of the y-column</dd>
+	</dl>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-		<dt>payload
-			<span class="property-type">table</span>
-		</dt>
+		<dt>payload<span class="property-type">table</span></dt>
 		<dd>The feature data (x) to create the prediction for.</dd>
-		<dt>modelfile
-			<span class="property-type">string</span>
-		</dt>
+		<dt>modelfile<span class="property-type">string</span></dt>
 		<dd>The name of the pickle file to load the trained model from. See also documentation for the regressor, classifier and outlier detection nodes</dd>
 	</dl>
 
@@ -48,7 +69,7 @@
 	<ol class="node-ports">
 		<dl class="message-properties">
 			<dt>payload <span class="property-type">array</span></dt>
-			<dd>a list of predictions (y-values) based on the input and trained model</dd>
+			<dd>a (json) formatted dictionary of predictions based on the input and trained model, according to the configured orientation</dd>
 		</dl>
 	</ol>
 
