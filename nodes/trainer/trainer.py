@@ -1,3 +1,4 @@
+import json
 import pandas
 import os
 import sys
@@ -50,44 +51,11 @@ def process_input(kwargs, config, topic, payload):
                     if len(parameter) > 1:
                         type = parameter[1]
                     parameter = parameter[0]
-                    # if type:
-                    #     print(parameter + " is of type " + type)
-                    # else:
-                    #     print(parameter + " has no type information")
             else:
                 # val contains the value of 'v', the value of the parameter
-                # make sure that we pass the correct type to the constructor
+                # type contains the type of value to pass to the constructor
                 if parameter:
-                    if type == "float":
-                        val = float(val)
-                    elif type == "int":
-                        val = int(val)
-                    elif type == "bool":
-                        val = bool(val)
-                    elif type == "int-float":
-                        if "." in val:
-                            val = float(val)
-                        else:
-                            val = int(val)
-                    elif type == "int-string":
-                        try:
-                            val = int(val)
-                        except:
-                            val = str(val)
-                    elif type == "float-string":
-                        try:
-                            val = float(val)
-                        except:
-                            val = str(val)
-                    elif type == "int-float-string":
-                        try:
-                            if "." in val:
-                                val = float(val)
-                            else:
-                                val = int(val)
-                        except:
-                            val = str(val)
-                    kwargs[parameter] = val
+                    kwargs[parameter] = utils.cast(val, type)
 
     model = None
     if algorithm == "elliptic-envelope":

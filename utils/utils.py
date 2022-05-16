@@ -35,3 +35,43 @@ def wait_for_input(process_input):
         except Exception as e:
             # Print exceptions to the stderr output but continue processing input
             print(e, file=sys.stderr)
+
+
+def cast(val, type):
+    if type == "float":
+        val = float(val)
+    elif type == "int":
+        val = int(val)
+    elif type == "bool":
+        val = bool(val)
+    elif type == "int-float":
+        if "." in val:
+            val = float(val)
+        else:
+            val = int(val)
+    elif type == "int-string":
+        try:
+            val = int(val)
+        except:
+            val = str(val)
+    elif type == "float-string":
+        try:
+            val = float(val)
+        except:
+            val = str(val)
+    elif type == "int-float-string":
+        try:
+            if "." in val:
+                val = float(val)
+            else:
+                val = int(val)
+        except:
+            val = str(val)
+    elif type == "dict":
+        val = json.loads(val)
+    elif type == "dict-string":
+        try:
+            val = json.loads(val)
+        except:
+            val = str(val)
+    return val
