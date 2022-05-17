@@ -26,7 +26,6 @@ def process_input(kwargs, config, topic, payload):
         # Choose the right type depending on the architecture
         if type == "datetime" or type == "int" or type == "float":
             type = type + architecture
-        print(type)
 
         # retype column
         dtype = {}
