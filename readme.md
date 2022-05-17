@@ -14,8 +14,8 @@ If you install the nodes on a raspberry pi, make sure to uninstall the python3-p
 and install the required packages with pip (assuming pip is an alias for pip3). Warning this may take some time depending on your pi's version!
 
 <code>
-apt-get install python3-pip  
-python -m pip install numpy  
-python -m pip install pandas  
-python -m pip install scikit-learn
+apt-get install python3-pip
+
+python -m pip install numpy pandas scikit-learn
+
 </code>
