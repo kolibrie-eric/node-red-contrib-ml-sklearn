@@ -1,6 +1,6 @@
 # Dependencies
 
-These nodes depend on python 3, pandas and scikit-learn pre-installed. The versions tested are:
+These nodes depend on python 3, pandas and scikit-learn being pre-installed. The versions tested are:
 
 - python 3.7.3
 - pandas 1.3.5
@@ -13,7 +13,7 @@ If you install the nodes on a raspberry pi, make sure to uninstall the python3-p
 
 and install the required packages with pip (assuming pip is an alias for pip3). Warning this may take some time depending on your pi's version!
 
-<code>apt-get install python3-pip</code>
-<code>python -m pip install numpy</code>
-<code>python -m pip install pandas</code>
-<code>python -m pip install scikit-learn</code>
+<code>apt-get install python3-pip<br>
+python -m pip install numpy<br>
+python -m pip install pandas<br>
+python -m pip install scikit-learn</code>
