@@ -57,10 +57,10 @@
           var group0 = $('<optgroup/>', { label: "Pandas dtype" }).appendTo(selectFieldType);
           group0.append($('<option selected="selected"></option>').val('').text(''));
           group0.append($("<option></option>").val('object').text('string'));
-          group0.append($("<option></option>").val('int').text('int'));
-          group0.append($("<option></option>").val('float').text('float'));
+          group0.append($("<option></option>").val('int64').text('int'));
+          group0.append($("<option></option>").val('float64').text('float'));
           group0.append($("<option></option>").val('bool').text('bool'));
-          group0.append($("<option></option>").val('datetime').text('datetime'));
+          group0.append($("<option></option>").val('datetime64').text('datetime'));
           group0.append($("<option></option>").val('timedelta').text('timedelta'));
           group0.append($("<option></option>").val('category').text('category'));
           selectFieldType.val(rule.t);

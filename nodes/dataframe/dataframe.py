@@ -1,7 +1,6 @@
 import pandas
 import os
 import sys
-import ctypes
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../utils")
 import utils
@@ -14,18 +13,11 @@ def process_input(kwargs, config, topic, payload):
     # load data from request
     df = pandas.read_json(payload, orient="values")
 
-    # Determine architecture; 32 or 64-bit
-    architecture = ctypes.sizeof(ctypes.c_voidp) * 8
-
     # Get the rules from the configuration
     rules = config["rules"]
     for rule in rules:
         column = rule["c"]
         type = rule["t"]
-
-        # Choose the right type depending on the architecture
-        if type == "datetime" or type == "int" or type == "float":
-            type = type + architecture
 
         # retype column
         dtype = {}
