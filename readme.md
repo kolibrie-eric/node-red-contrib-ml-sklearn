@@ -26,6 +26,24 @@ Depending on the algorithm chosen, the node allows you to configure one or more 
 call the fit method of the algorithm. Upon success, its output is a pickle file containing the trained model. The node can be provided a payload in the form of a
 dictionary or the name of a pickle file which is the output of the dataframe node.
 
+Configured parameters can be overridden by a corresponding message property, e.g.:
+
+<code>msg.n_estimators=200</code>
+
+will override the n_estimators property configured for the RandmoForestRegressor.
+
+## Classifier
+
+The classifier node wraps the following classifier algorithms within the scikit learn package:
+
+- DecisionTreeClassifier
+- KNeighborsClassifier
+- MLPClassifier
+- RandomForestClassifier
+- SVC
+
+Its behavior is similar to the [regressor](#regressor) node.
+
 # Dependencies
 
 These nodes depend on python 3, pandas and scikit-learn being pre-installed. The versions tested are:
