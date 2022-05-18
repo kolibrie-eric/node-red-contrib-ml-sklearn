@@ -1,3 +1,31 @@
+# Available nodes
+
+## Dataframe
+
+The dataframe node is a wrapper around the pandas dataframe. It will take a payload of values and transform that into a dataframe. It currently supports
+the following operations:
+
+- Retype of a column
+- Column shift
+- Set the index of the dataframe
+
+The node will output the name of the pickle file it created after completing the transformation. The output can be forwarded to a regressor or classifier node
+to train a model.
+
+## Regressor
+
+The regressor node wraps the following regression algorithms within the scikit learn package:
+
+- DecisionTreeRegressor
+- MLPRegressor
+- RandomForestRegressor
+- SVR
+- KNeighborsRegressor
+
+Depending on the algorithm chosen, the node allows you to configure one or more parameters to pass to its constructor. When a payload is passed to the node, it will
+call the fit method of the algorithm. Upon success, its output is a pickle file containing the trained model. The node can be provided a payload in the form of a
+dictionary or the name of a pickle file which is the output of the dataframe node.
+
 # Dependencies
 
 These nodes depend on python 3, pandas and scikit-learn being pre-installed. The versions tested are:
