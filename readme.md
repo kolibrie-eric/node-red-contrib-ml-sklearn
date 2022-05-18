@@ -5,9 +5,9 @@
 The dataframe node is a wrapper around the pandas dataframe. It will take a payload of values and transform that into a dataframe. It currently supports
 the following operations:
 
-- Retype of a column
-- Column shift
-- Set the index of the dataframe
+- Retype of a column (via [astype](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html))
+- Column shift (via [shift](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.shift.html?highlight=pandas%20shift#pandas.DataFrame.shift))
+- Set the index of the dataframe (via [set_index](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.set_index.html))
 
 The node will output the name of the pickle file it created after completing the transformation. The output can be forwarded to a regressor or classifier node
 to train a model.
