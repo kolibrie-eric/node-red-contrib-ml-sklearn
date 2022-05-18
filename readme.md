@@ -46,18 +46,19 @@ Its behavior is similar to the [regressor](#regressor) node.
 
 # Dependencies
 
-These nodes depend on python 3, pandas and scikit-learn being pre-installed. The versions tested are:
+These nodes depend on python 3, pandas, numpy and scikit-learn being pre-installed. The packages are not installed by npm! The versions tested against are:
 
 - python 3.7.3
 - pandas 1.3.5
 - numpy 1.20.2
 - scikit-learn 1.0.2
 
-If you install the nodes on a raspberry pi, make sure to uninstall the python3-pandas and python3-numpy packages:
+If you install the nodes on a raspberry pi, make sure to first uninstall the _python3-pandas_ and _python3-numpy_ packages:
 
 <code>apt-get purge python3-pandas python3-numpy</code>
 
-and install the required packages with pip (assuming pip is an alias for pip3). Warning this may take some time depending on your pi's version!
+and install the required packages with pip (where pip is an alias for pip3). Warning: this may take some time depending on your pi's version!
 
 <code>apt-get install python3-pip</code>  
+<code>apt-get install python3-setuptools</code>  
 <code>python -m pip install numpy pandas scikit-learn</code>

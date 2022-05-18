@@ -14,6 +14,7 @@
     defaults: {
       name: { value: "" },
       rules: { value: [{ c: "", t: "", s: "", i: false }] },
+      orient: { value: "values" },
     },
     inputs: 1,
     outputs: 1,
@@ -50,6 +51,9 @@
             rule.c = elem.value;
             node.rules[node.rules.length] = {}; // Trigger deployment
           });
+
+          // Default value for the orientation of the input
+          if (!$('#node-input-orient').val()) $('#node-input-orient').val("values");
 
           // Option: (re)type the column
           if (!rule.hasOwnProperty('t')) rule.t = "";
@@ -149,6 +153,17 @@
     <label for="node-input-name"><i class="icon-tag"></i>Name</label>
     <input type="text" id="node-input-name" style="width: calc(100% - 105px)" placeholder="Name">
   </div>
+  <div class="form-row">
+    <label for="node-input-orient"><i class="icon-tag"></i>Orientation</label>
+	<select id="node-input-orient" style="width:70%;">
+		<option value="columns" selected>columns</option>
+		<option value="split">split</option>
+		<option value="records">records</option>
+		<option value="index">index</option>
+		<option value="values">values</option>
+		<option value="table">table</option>
+	</select>
+  </div>
   <div class="form-row" style="margin-bottom:0;">
     <div class="form-row" style="margin-bottom:0;">
       <label><i class="fa fa-list"></i> <span data-i18n="change.label.rules">Actions</span></label>
@@ -173,30 +188,32 @@
 	<dl class="message-properties">
 		<dt>Name<span class="property-type">string</span></dt>
 		<dd>The name of the node</dd>
-    <dt>Actions</dt>
-    <dd>A list of column transformations to execute after the data has been loaded</dd>
+		<dt>Orientation<span class="property-type">selection</span></dt>
+		<dd>The <a href="https://pandas.pydata.org/docs/reference/api/pandas.read_json.html">orientation</a> of the payload to process</dd>
+    <dt>Actions<span class="property-type">list</span></dt>
+    <dd>A list of column actions to execute after the data has been loaded</dd>
 	</dl>
 
-	<h3>Inputs</h3>
+	<h3>Input</h3>
 	<dl class="message-properties">
 		<dt>payload
-			<span class="property-type">table</span>
+			<span class="property-type">dictionary</span>
 		</dt>
 		<dd>The data to load into the dataframe</dd>
 	</dl>
 
-	<h3>Outputs</h3>
+	<h3>Output</h3>
 	<ol class="node-ports">
 		<dl class="message-properties">
-			<dt>payload <span class="property-type">array</span></dt>
-			<dd>A dictionary created from the dataframe</dd>
+			<dt>payload <span class="property-type">string</span></dt>
+			<dd>The name of the pickle file created from the dataframe</dd>
 		</dl>
 	</ol>
 
 	<h3>Details</h3>
 	<p>
-    This node is typically used as input for the trainer and regressor nodes.<br><br>
-    The node first loads the data from the payload into a dataframe. After that the following actions are performed on the dataframe in order of appearance:<br><br>
+    This node is typically used as input for the classifier and regressor nodes.<br><br>
+    The node first loads the payload into a dataframe. After that the following actions are performed on the dataframe in order of execution:<br><br>
     - Retype of one or more columns (see also <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html">astype</a>)<br>
     - Set the index of the dataframe (see also <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.set_index.html">set_index</a>)<br>
     <!-- - Scalar math operations (mul, add, sub, etc.) (see for example <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.mul.html">mul</a>)<br> -->

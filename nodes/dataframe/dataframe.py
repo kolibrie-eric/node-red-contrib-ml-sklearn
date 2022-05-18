@@ -11,7 +11,7 @@ importlib.reload(utils)
 # define processing function
 def process_input(kwargs, config, topic, payload):
     # load data from request
-    df = pandas.read_json(payload, orient="values")
+    df = pandas.read_json(payload, orient=config["orient"])
 
     # Get the rules from the configuration
     rules = config["rules"]
