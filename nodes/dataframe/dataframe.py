@@ -9,7 +9,7 @@ import importlib
 importlib.reload(utils)
 
 # define processing function
-def process_input(kwargs, config, topic, payload):
+def dataframe_process_input(kwargs, config, topic, payload):
     # load data from request
     df = pandas.read_json(payload, orient=config["orient"])
 
@@ -49,8 +49,12 @@ def process_input(kwargs, config, topic, payload):
     fullname = os.path.join(path, file)
     df.to_pickle(fullname)
 
-    return fullname, "dataframe", "done"
+    # Fill the parameters dictionary
+    parameters = {}
+    parameters["payload"] = fullname
+
+    return parameters, "dataframe", "done"
 
 
 # Process input
-utils.wait_for_input(process_input)
+utils.wait_for_input(dataframe_process_input)

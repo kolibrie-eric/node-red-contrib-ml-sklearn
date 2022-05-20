@@ -9,7 +9,7 @@ import importlib
 importlib.reload(utils)
 
 # define processing function
-def process_input(kwargs, config, topic, payload):
+def regressor_process_input(kwargs, config, topic, payload):
     # Get the x and y from the payload
     x, y = utils.read_data(payload)
 
@@ -41,11 +41,15 @@ def process_input(kwargs, config, topic, payload):
 
         model = SKLW(config, model=KNeighborsRegressor(**kwargs))
 
+    # Fill the parameters dictionary
+    parameters = {}
+    parameters["payload"] = model.fit(x, y)
+
     # Train the model and send the result. The first return value (payload) is the file name of trained model.
     # The second one (topic), the name of the model/algorithm used. The topic 'model' is used by the predictor
     # to store the trained model file for later use. The third parameter is the status of the node when training is succesful
-    return model.fit(x, y), "model", "training complete"
+    return parameters, "model", "training complete"
 
 
 # Process input
-utils.wait_for_input(process_input)
+utils.wait_for_input(regressor_process_input)

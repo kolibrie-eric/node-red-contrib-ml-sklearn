@@ -15,7 +15,8 @@ def wait_for_input(process_input):
 
     Args:
         process_input: the processing function for the node, e.g. process_input in classifier.py
-        The processing function returns a tuple: payload, topic and status. The payload and topic are passed to the output message of the node.
+        The processing function returns a tuple: parameters, topic and status. The parameters and topic are passed to the output message of the node,
+        where each of the entries in the parameters dictionary is added as a separate
         The status is used as the status text of the node.
     """
     # read configurations
@@ -32,11 +33,15 @@ def wait_for_input(process_input):
             topic = data["topic"]
 
             # Process the data
-            payload, topic, status = process_input(kwargs, config, topic, payload)
+            parameters, topic, status = process_input(kwargs, config, topic, payload)
 
             # compile the result message
             msg = {}
-            msg["payload"] = payload
+            if parameters:
+                for key in parameters:
+                    msg[key] = parameters[key]
+            else:
+                msg["payload"] = None
             msg["topic"] = topic
             msg["status"] = status
 

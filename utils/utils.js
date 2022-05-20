@@ -1,5 +1,6 @@
 const status = require('./status.js');
 const { spawn } = require('child_process');
+const { notStrictEqual } = require('assert');
 
 //use 'python3' on linux and 'python' on anything else
 const pcmd = process.platform === 'linux' ? 'python3' : 'python';
@@ -15,22 +16,30 @@ const create_python_process = (node) => {
 			let msg = {};
 			try {
 				// Try to parse the return string as a JSON string
-				data = JSON.parse(data.toString());
-				console.log(data);
-				try {
-					msg.payload = JSON.parse(data.payload);
-				}
-				catch (err) {
-					msg.payload = data.payload.toString();
-				}
+				// If it is not a JSON string it will throw an exception
+				data = JSON.parse(data);
+
+				// Process the parameters passed back to this function
+				Object.entries(data).forEach(item => {
+					try {
+						// Try a JSON parse
+						msg[item[0]] = JSON.parse(item[1]);
+					}
+					catch (err) {
+						// We'll end up here when the item value is not a JSON string
+						msg[item[0]] = item[1].toString();
+					}
+				})
 			}
 			catch (err) {
 				// JSON parse not succesfull. Just return the result string
 				msg.payload = data.toString();
+				msg.topic = "string received";
+				msg.status = status.DONE;
 			}
-			msg.topic = data.topic;
+			node.status({ fill: "green", shape: "dot", text: msg.status });
+			delete msg.status;
 
-			node.status({ fill: "green", shape: "dot", text: data.status });
 			if (msg.payload !== null)
 				node.send(msg)
 		})

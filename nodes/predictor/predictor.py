@@ -12,7 +12,7 @@ import importlib
 importlib.reload(utils)
 
 # define processing function
-def process_input(kwargs, config, topic, payload):
+def predictor_process_input(kwargs, config, topic, payload):
     # The file containing the name of the training data file
     file = config["id"] + ".pickle"
     fullname = os.path.join(config["path"], file)
@@ -50,8 +50,12 @@ def process_input(kwargs, config, topic, payload):
     df[config["y_column"]] = model.predict(df)
     payload = df.to_json(orient=config["orient"])
 
-    return payload, type(model.model).__name__, "prediction complete"
+    # Fill the parameters dictionary
+    parameters = {}
+    parameters["payload"] = payload
+
+    return parameters, type(model.model).__name__, "prediction complete"
 
 
 # Process input
-utils.wait_for_input(process_input)
+utils.wait_for_input(predictor_process_input)
