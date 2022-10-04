@@ -8,7 +8,8 @@ module.exports = function (RED) {
         node.config = {
             name: config.name,
             algorithm: config.algorithm,
-            parameters: config.rules
+            parameters: config.rules,
+            debug: config.debug,
         }
 
         utils.run(RED, node, config)

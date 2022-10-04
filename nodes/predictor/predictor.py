@@ -1,18 +1,18 @@
-import json
-import pandas
+import pandas as pd
 import os
 import sys
 import pickle
 
+pd.set_option("display.max_columns", None)
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../utils")
-from sklw import SKLW
 import utils
-import importlib
-
-importlib.reload(utils)
 
 # define processing function
 def predictor_process_input(kwargs, config, topic, payload):
+    # Do we need to show intermediate debug information?
+    # debug = config["debug"] == True
+    # utils.debug(debug)
+
     # The file containing the name of the training data file
     file = config["id"] + ".pickle"
     fullname = os.path.join(config["path"], file)
@@ -24,15 +24,17 @@ def predictor_process_input(kwargs, config, topic, payload):
     # If we received a trained model file, save that for later use
     if topic == "model":
         pickle.dump(payload, open(fullname, "wb"))
+        # if debug:
+        #     utils.debug("model saved", fullname)
         return None, None, "model received"
 
     # load data from request
     try:
         # Try to load the data from file.
-        df = pandas.read_pickle(payload)
+        df = pd.read_pickle(payload)
     except Exception as e:
         # load data from request
-        df = pandas.read_json(payload, orient="values")
+        df = pd.read_json(payload, orient="values")
 
     # By now we should have received a training model file or one was
     # previously stored on disk and now we have a payload to process
@@ -42,19 +44,19 @@ def predictor_process_input(kwargs, config, topic, payload):
 
     # Initialize the model. SKLW expects the filename to be part of the configuration
     config["file"] = file
-    model = SKLW(config)
+    model = utils.sklw(config)
 
-    # Make the prediction and send the result. The first return value (payload) is the prediction.
+    # Make the prediction and get the result. The first return value (payload) is the prediction.
     # The second one (topic), the name of the model/algorithm used
-    columns = df.columns
     df[config["y_column"]] = model.predict(df)
-    payload = df.to_json(orient=config["orient"])
-
-    # Fill the parameters dictionary
     parameters = {}
-    parameters["payload"] = payload
+    parameters["payload"] = df.to_json(orient=config["orient"])
 
-    return parameters, type(model.model).__name__, "prediction complete"
+    # add the attributes of the model to the message
+    model.store_attributes(parameters)
+
+    # Return payload, topic and final status
+    return parameters, "prediction", "prediction complete"
 
 
 # Process input

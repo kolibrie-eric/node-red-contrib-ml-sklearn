@@ -1,6 +1,45 @@
 import sys
 import json
-import pandas
+import pandas as pd
+import re
+
+from sklw import sklw as _sklw
+
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", 1000)
+
+
+def debug(var, *msg):
+    """
+    Prints a debug message in the nodered debug side window, including the filename and linenumber where this function was called
+    """
+    import inspect
+
+    # Get the file name of the calling function to ease the process of finding bugs
+    filename = inspect.stack()[1].filename
+    match = re.search(r"[^\/]+(?:\w+\.\w+)", filename)
+    if match:
+        filename = match.group(0)
+
+    # Get also the line number where this function was called
+    lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
+
+    # Build the filename and linenumber info string and a variable if specified
+    # Note that the = sign is mandatory and used by utils.js to separate the filename header from the message body
+    if var:
+        filename = f"{filename}({lineno}): {var} ="
+    else:
+        filename = f"{filename}({lineno}) ="
+
+    # Send the log message back to the utils.js script for further processing
+    print("#log#", filename, *msg, file=sys.stderr)
+
+
+def sklw(config, algorithm=None, **kwargs):
+    """
+    return a Scikit-learn model wrapper with the specified configuration and model
+    """
+    return _sklw(config, algorithm, **kwargs)
 
 
 def wait_for_input(process_input):
@@ -16,8 +55,8 @@ def wait_for_input(process_input):
     Args:
         process_input: the processing function for the node, e.g. process_input in classifier.py
         The processing function returns a tuple: parameters, topic and status. The parameters and topic are passed to the output message of the node,
-        where each of the entries in the parameters dictionary is added as a separate
-        The status is used as the status text of the node.
+        where each of the entries in the parameters dictionary is added as a separate message property or in case it contains only a single value to the
+        payload property. The status is used as the status text of the node.
     """
     # read configurations
     config = json.loads(input())
@@ -37,13 +76,20 @@ def wait_for_input(process_input):
 
             # compile the result message
             msg = {}
-            if parameters:
+            try:
+                # In case the payload is a dictionary
                 for key in parameters:
                     msg[key] = parameters[key]
-            else:
-                msg["payload"] = None
+            except:
+                # In case the payload is just a payload and not a dictionary
+                msg["payload"] = parameters
+
             msg["topic"] = topic
             msg["status"] = status
+
+            # Add the kwargs back to the message
+            for key in kwargs:
+                msg[key] = kwargs[key]
 
             # And send it back to the 'utils.js' script
             print(json.dumps(msg), file=sys.stdout)
@@ -52,7 +98,7 @@ def wait_for_input(process_input):
             print(e, file=sys.stderr)
 
 
-def read_data(payload):
+def read_data(payload, dbg=False):
     """Read the data from the payload and return the x and y data
 
     The function will first try use the payload as the name of a file, assuming the data to load is in that file.
@@ -62,25 +108,32 @@ def read_data(payload):
 
     Args:
         payload: The name of (pickle) file holding the data to read or a JSON dictionary.
+        dbg: If set to true the function will call the debug method to show additional (debug) information
 
     Returns:
-        the x and y columns of the dataframe loaded
+        the X (features) and y columns of the dataframe loaded
     """
     df = None
     try:
         # Try to load the data from file. Sometimes the payload is wrapped in "". Remove those
         if payload[0] == '"':
             payload = payload[1 : len(payload) - 1]
-        df = pandas.read_pickle(payload)
+        df = pd.read_pickle(payload)
     except Exception as e:
         # load data from msg.payload
-        df = pandas.read_json(payload, orient="values")
+        df = pd.read_json(payload, orient="values")
+
+    if dbg:
+        names = list(df.columns)
+        debug("Y", names[-1])
+        del names[-1]
+        debug("Features", names)
 
     # Determine the features and the y-column
-    x = df.iloc[:, :-1]  # Everything but the last column
+    X = df.iloc[:, :-1]  # Everything but the last column
     y = df.iloc[:, -1]  # Last column
 
-    return x, y
+    return X, y
 
 
 def process_parameters(config, kwargs):

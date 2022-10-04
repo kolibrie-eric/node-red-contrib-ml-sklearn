@@ -1,24 +1,40 @@
 <script type="text/javascript">
-	RED.nodes.registerType('assessment',{
+	RED.nodes.registerType('C-assessor', {
 		category: 'machine learning',
-		color: '#E9967A',
+		color: '#3499cd',
 		defaults: {
-			name: {value:""},
-			score: {value:"accuracy_score"}
+			name: { value: "" },
+			split: { value: "80" },
+			score: { value: "" }
 		},
-		inputs:1,
-		outputs:2,
-		icon: "function.png",
-		label: function() {
-			return this.name||"assessment";
-		}
+		inputs: 1,
+		outputs: 1,
+		icon: "font-awesome/fa-line-chart",
+		label: function () {
+			return this.name || "C-assessor";
+		},
+		labelStyle: function () {
+			return this.name ? "node_label_italic" : "";
+		},
 	});
 </script>
 
-<script type="text/x-red" data-template-name="assessment">
+<script type="text/x-red" data-template-name="C-assessor">
 	<div class="form-row">
 		<label for="node-input-name"><i class="icon-tag"></i>Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+	<div class="form-row">
+		<label for="node-input-split"><i class="icon-tag"></i>Train set size (%)</label>
+		<input type="number" min="1" max="100" id="node-input-split" placeholder="80">
+	</div>
+	<div class="form-row">
+		<label for="node-input-random"><i class="icon-tag"></i>Random state</label>
+		<input type="number" id="node-input-random" placeholder="1">
+	</div>
+	<div class="form-row">
+		<label for="node-input-stratify"><i class="icon-tag"></i>Stratify</label>
+		<input type="text" id="node-input-stratify" placeholder="y">
 	</div>
 	<div class="form-row">
 		<label for="node-input-score"><i class="icon-tag"></i>Type</label>
@@ -38,15 +54,15 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="assessment">
-	<p>A node that does assessment over real and predicted data.</p>
+<script type="text/x-red" data-help-name="C-assessor">
+	<p>A node that will assess the accuracy of a chosen classifier model based on the chosen metric, train-test split and random state.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 		<dt>payload
-			<span class="property-type">array</span>
+			<span class="property-type">string</span>
 		</dt>
-		<dd>the data to analyze.</dd>
+		<dd>The name of a model file or data to analyze</dd>
 
 		<dt>topic
 			<span class="property-type">string</span>

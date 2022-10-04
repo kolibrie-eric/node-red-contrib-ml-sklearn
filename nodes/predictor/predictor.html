@@ -5,7 +5,8 @@
 		defaults: {
 			name: { value: "" },
 			orient: { value: "values" },
-			y_column: { value: "y" }
+			y_column: { value: "y" },
+			debug: { value: false },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -38,6 +39,10 @@
   <div class="form-row">
     <label for="node-input-y_column"><i class="icon-tag"></i>Y-column</label>
     <input type="text" id="node-input-y_column" placeholder="Name of the y-column">
+  </div>
+  <div class="form-row">
+    <input type="checkbox" id="node-input-debug" style="display: inline-block; width: auto; vertical-align: top;">
+    <label style="width: auto;" for="node-input-debug"><span data-i18n="dataframe.label.debug">Show intermediate steps</span></label></input>
   </div>
 </script>
 
@@ -82,6 +87,8 @@
 
         if you want to change the type of one or more columns of the dataframe in python, specify an <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html">astype</a> property<br><br>
 
-        <code>msg.astype = {'col1': 'int', 'col2': 'datetime'}</code>
+        <code>msg.astype = {'col1': 'int', 'col2': 'datetime'}</code><br><br>
+
+        Enable the checkbox 'show intermediate steps', if you want to see more information about the dataframe being created. When enabled, the node will output information to the node red debug sidebar.<br><br>
 	</p>
 </script>

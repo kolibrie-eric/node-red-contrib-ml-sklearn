@@ -10,7 +10,8 @@ module.exports = function (RED) {
     node.config = {
       name: config.name,
       orient: config.orient,
-      y_column: config.y_column
+      y_column: config.y_column,
+      debug: config.debug,
     }
 
     utils.run(RED, node, config)

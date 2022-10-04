@@ -1,6 +1,7 @@
 const status = require('./status.js');
 const { spawn } = require('child_process');
 const { notStrictEqual } = require('assert');
+const { networkInterfaces } = require('os');
 
 //use 'python3' on linux and 'python' on anything else
 const pcmd = process.platform === 'linux' ? 'python3' : 'python';
@@ -9,7 +10,7 @@ const pcmd = process.platform === 'linux' ? 'python3' : 'python';
 const create_python_process = (node) => {
 	if (node.proc === undefined) {
 		// node.file contains the python script to execute
-		node.proc = spawn(pcmd, [node.file], ['pipe', 'pipe', 'pipe']);
+		node.proc = spawn(pcmd, [node.file]);
 
 		// Handle results
 		node.proc.stdout.on('data', (data) => {
@@ -44,10 +45,28 @@ const create_python_process = (node) => {
 				node.send(msg)
 		})
 
-		// Handle errors
+		// Handle errors and debug messages
 		node.proc.stderr.on('data', (data) => {
-			node.status(status.ERROR);
-			node.error(data.toString());
+			let s = data.toString();
+
+			// Is this a debug message from the python process?
+			if (s.includes("#log#")) {
+				// Remove the identification string that makes this a debug message
+				s = s.replace(/#log#\s*/, "");
+
+				// Remove the trailing /n if necessary
+				s = s.replace(/[\n\r]+$/, "");
+
+				// Add a end of line after the first semicolon (after filename and line number)
+				s = s.replace(/=/, "=\n")
+
+				// Notify nodered
+				node.warn(s);
+			}
+			else {
+				node.status(status.ERROR);
+				node.error(data.toString());
+			}
 		})
 
 		// Handle crashes

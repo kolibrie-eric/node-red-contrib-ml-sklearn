@@ -101,6 +101,7 @@
             name: { value: "" },
             algorithm: { value: "random-forest-classifier" },
             rules: { value: [{ p: "", v: "" }] },
+            debug: { value: false },
         },
         inputs: 1,
         outputs: 1,
@@ -231,10 +232,16 @@
     <div class="form-row node-input-parameter-container-row">
         <ol id="node-input-parameter-container"></ol>
     </div>  
+    <div class="form-row">
+        <input type="checkbox" id="node-input-debug" style="display: inline-block; width: auto; vertical-align: top;">
+        <label style="width: auto;" for="node-input-debug"><span data-i18n="dataframe.label.debug">Show intermediate steps</span></label></input>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="classifier">
-	<p>A node that trains the selected scikit-learn classifier algorithm. After loading the data into a pandas dataframe, the node will call the fit (<a href="https://scikit-learn.org/0.16/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier.fit">example</a>) function of the algorithm. The trained model is stored in a pickle file on disk in the node red user directory</p>
+	<p>A node that trains the selected scikit-learn classifier algorithm. After loading the data into a pandas dataframe, the node will call the fit (<a href="https://scikit-learn.org/0.16/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier.fit">example</a>) function of the algorithm. The trained model is stored in a pickle file on disk in the node red user directory
+    <b>Important: the last column must be the y-variable!</b>
+    </p>
 
     <h3>Configuration</h3>
     <dl class="message-properties">
@@ -277,5 +284,7 @@
         <code>msg.n_estimators = 200</code><br><br>
 
         Anything that is not the topic or payload of the message will be passed as an argument to the constructor!<br><br>
-	</p>
+
+        Enable the checkbox 'show intermediate steps', if you want to see more information about the dataframe being created. When enabled, the node will output information to the node red debug sidebar.<br><br>
+    </p>
 </script>
