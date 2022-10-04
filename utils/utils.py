@@ -24,6 +24,9 @@ def debug(var, *msg):
     # Get also the line number where this function was called
     lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
 
+    # Make sure that the var does not contain whitespaces
+    var = var.replace(" ", "-")
+
     # Build the filename and linenumber info string and a variable if specified
     # Note that the = sign is mandatory and used by utils.js to separate the filename header from the message body
     if var:

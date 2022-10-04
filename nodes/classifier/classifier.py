@@ -35,7 +35,7 @@ def classifier_process_input(kwargs, config, topic, payload):
     # Construct the model
     model = utils.sklw(config, algorithm, **kwargs)
     if debug:
-        utils.debug("model parameters", model.get_params())
+        utils.debug("model-parameters", model.get_params())
 
     # Train the model
     parameters = {}

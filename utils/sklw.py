@@ -1,6 +1,5 @@
 import pickle
 import os
-import utils
 import json
 import numpy
 from inspect import signature
@@ -17,6 +16,24 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+
+
+def get_all_constructor_params(algorithm):
+    params = {}
+    classes = []
+
+    # Get the classes per type of of algorithm
+    if algorithm.lower() == "regressor":
+        classes = [DecisionTreeRegressor, MLPRegressor, RandomForestRegressor, SVR, KNeighborsRegressor]
+    else:
+        classes = [DecisionTreeClassifier, KNeighborsClassifier, MLPClassifier, RandomForestClassifier, SVC]
+
+    # And retrieve the constructor parameters per class
+    for cl in classes:
+        params[cl.__name__] = list(signature(cl).parameters)
+
+    # Return the dictionary of constructor parameters per class
+    return params
 
 
 class sklw:

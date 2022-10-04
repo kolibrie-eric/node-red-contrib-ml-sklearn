@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import pandas as pd
 
 pd.set_option("display.max_columns", None)
@@ -29,7 +30,7 @@ def regressor_process_input(kwargs, config, topic, payload):
     # Construct the model
     model = utils.sklw(config, algorithm, **kwargs)
     if debug:
-        utils.debug("model parameters", model.get_params())
+        utils.debug("model-parameters", json.dumps(model.get_params()))
 
     # Train the model
     parameters = {}
