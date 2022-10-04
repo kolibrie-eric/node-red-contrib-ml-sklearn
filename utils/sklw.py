@@ -1,11 +1,12 @@
-# SciKit-Learn models' wrapper
 import pickle
 import os
 import utils
 import json
 import numpy
 from inspect import signature
+import sys
 
+# Sklearn classes
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -28,38 +29,17 @@ class sklw:
             algorithm: The name of the algorithm to initialize the model with, e.g. a decision tree, support vector or random forest regressor or classifier
             kwargs: A dictionary of key, value pairs that contain the parameters as passed to this method via the message object in nodered or via the node configuration
         """
+        # Create the model from its name/string
+        model = getattr(sys.modules[__name__], algorithm)
 
-        def _create_model(algorithm, **kwargs):
-            # get the parameters for the constructor
-            params = list(signature(algorithm).parameters)
+        # get the parameters for the constructor
+        params = list(signature(model).parameters)
 
-            # gather parameters that are in the list of parameters for the algorithm' constructor
-            params = {k: v for k, v in kwargs.items() if k in params}
+        # gather parameters that are in the list of parameters for the algorithm' constructor
+        params = {k: v for k, v in kwargs.items() if k in params}
 
-            # create an instance of the sklearn class using the recognized parameters
-            return algorithm(**params)
-
-        # Create the model from its name
-        if algorithm == "decision-tree-regressor":
-            self.model = _create_model(DecisionTreeRegressor, **kwargs)
-        elif algorithm == "multi-layer-perceptron-regressor":
-            self.model = _create_model(MLPRegressor, **kwargs)
-        elif algorithm == "random-forest-regressor":
-            self.model = _create_model(RandomForestRegressor, **kwargs)
-        elif algorithm == "support-vector-regressor":
-            self.model = _create_model(SVR, **kwargs)
-        elif algorithm == "k-neighbors-regressor":
-            self.model = _create_model(KNeighborsRegressor, **kwargs)
-        elif algorithm == "decision-tree-classifier":
-            self.model = _create_model(DecisionTreeClassifier, **kwargs)
-        elif algorithm == "k-neighbors-classifier":
-            self.model = _create_model(KNeighborsClassifier, **kwargs)
-        elif algorithm == "multi-layer-perceptron-classifier":
-            self.model = _create_model(MLPClassifier, **kwargs)
-        elif algorithm == "random-forest-classifier":
-            self.model = _create_model(RandomForestClassifier, **kwargs)
-        elif algorithm == "support-vector-classifier":
-            self.model = _create_model(SVC, **kwargs)
+        # instantiate the model
+        self.model = model(**params)
 
     def __init__(self, config, algorithm=None, **kwargs):
         """
@@ -72,7 +52,6 @@ class sklw:
             kwargs: a dictionary of message parameters and configuration parameters containing the Sklearn class constructor parameters
                 The dictionary may contain more than just the constructor parameters. Those will be ignored.
         """
-        utils.debug("init", algorithm)
         self.config = config
         self.path = self.config["path"]
 

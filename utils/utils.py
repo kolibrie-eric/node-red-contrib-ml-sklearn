@@ -125,9 +125,7 @@ def read_data(payload, dbg=False):
 
     if dbg:
         names = list(df.columns)
-        debug("Y", names[-1])
         del names[-1]
-        debug("Features", names)
 
     # Determine the features and the y-column
     X = df.iloc[:, :-1]  # Everything but the last column

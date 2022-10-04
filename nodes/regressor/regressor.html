@@ -1,6 +1,6 @@
 <script type="text/javascript">
     const parametersPerRegressorAlgorithm = {
-        "random-forest-regressor": [
+        "RandomForestRegressor": [
             "bootstrap:bool",
             "ccp_alpha:float",
             "criterion:string",
@@ -19,7 +19,7 @@
             "verbose:int",
             "warm_start:bool"
         ],
-        "decision-tree-regressor": [
+        "DecisionTreeRegressor": [
             "ccp_alpha:float",
             "criterion:string",
             "max_depth:int",
@@ -32,7 +32,7 @@
             "random_state:int",
             "splitter:string"
         ],
-        "multi-layer-perceptron-regressor": [
+        "MLPRegressor": [
             "activation:string",
             "alpha:float",
             "batch_size:int-string",
@@ -57,7 +57,7 @@
             "warm_start:bool",
             "max_fun:int"
         ],
-        "support-vector-regressor": [
+        "SVR": [
             "C:float",
             "cache_size:float",
             "coef0:float",
@@ -70,7 +70,7 @@
             "tol:float",
             "verbose:bool"
         ],
-        "k-neighbours-regressor": [
+        "KNeighborsRegressor": [
             "algorithm:string",
             "leaf_size:int",
             "metric:string",
@@ -93,7 +93,7 @@
         color: '#3499cd',
         defaults: {
             name: { value: "" },
-            algorithm: { value: "random-forest-regressor" },
+            algorithm: { value: "RandomForestRegressor" },
             rules: { value: [{ p: "", v: "" }] },
             debug: { value: false },
         },
@@ -211,11 +211,11 @@
     <div class="form-row">
         <label for="node-input-algorithm"><i class="fa fa-cogs"></i></label>
         <select id="node-input-algorithm" style="width:70%;">
-            <option value="random-forest-regressor">Random forest</option>
-            <option value="decision-tree-regressor">Decision tree</option>
-            <option value="multi-layer-perceptron-regressor">Multi-layer perceptron</option>
-            <option value="support-vector-regressor">Support vector</option>
-            <option value="k-neighbours-regressor">K-neighbours</option>
+            <option value="RandomForestRegressor">Random forest</option>
+            <option value="DecisionTreeRegressor">Decision tree</option>
+            <option value="MLPRegressor">Multi-layer perceptron</option>
+            <option value="SVR">Support vector</option>
+            <option value="KNeighborsRegressor">K-neighbours</option>
         </select>
     </div>
     <div class="form-row" style="margin-bottom:0;">

@@ -1,6 +1,6 @@
 <script type="text/javascript">
     const parametersPerClassifierAlgorithm = {
-        "random-forest-classifier": [
+        "RandomForestClassifier": [
             "bootstrap:bool",
             "ccp_alpha:float",
             "class_weight:dict",
@@ -20,7 +20,7 @@
             "verbose:int",
             "warm_start:bool"
         ],
-        "decision-tree-classifier": [
+        "DecisionTreeClassifier": [
             "ccp_alpha:float",
             "class_weight:dict",
             "criterion:string",
@@ -34,7 +34,7 @@
             "random_state:int",
             "splitter:string"
         ],
-        "multi-layer-perceptron-classifier": [
+        "MLPClassifier": [
             "activation:string",
             "alpha:float",
             "batch_size:int-string",
@@ -59,7 +59,7 @@
             "warm_start:bool",
             "max_fun:int"
         ],
-        "support-vector-classifier": [
+        "SVC": [
             "break_ties:bool",
             "C:float",
             "cache_size:float",
@@ -76,7 +76,7 @@
             "tol:float",
             "verbose:bool"
         ],
-        "k-neighbours-classifier": [
+        "KNeighborsClassifier": [
             "algorithm:string",
             "leaf_size:int",
             "metric:string",
@@ -99,7 +99,7 @@
         color: '#3499cd',
         defaults: {
             name: { value: "" },
-            algorithm: { value: "random-forest-classifier" },
+            algorithm: { value: "RandomForestClassifier" },
             rules: { value: [{ p: "", v: "" }] },
             debug: { value: false },
         },
@@ -217,11 +217,11 @@
     <div class="form-row">
         <label for="node-input-algorithm"><i class="fa fa-cogs"></i></label>
         <select id="node-input-algorithm" style="width:70%;">
-            <option value="random-forest-classifier">Random forest</option>
-            <option value="decision-tree-classifier">Decision tree</option>
-            <option value="multi-layer-perceptron-classifier">Multi-layer perceptron</option>
-            <option value="support-vector-classifier">Support vector</option>
-            <option value="k-neighbours-classifier">K-neighbours</option>
+            <option value="RandomForestClassifier">Random forest</option>
+            <option value="DecisionTreeClassifier">Decision tree</option>
+            <option value="MLPClassifier">Multi-layer perceptron</option>
+            <option value="SVC">Support vector</option>
+            <option value="KNeighborsClassifier">K-neighbours</option>
         </select>
     </div>
     <div class="form-row" style="margin-bottom:0;">
